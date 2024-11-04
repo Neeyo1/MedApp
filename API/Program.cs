@@ -1,6 +1,8 @@
 using System.Text;
 using API.Data;
 using API.Entities;
+using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<DataContext>(opt => 
@@ -49,5 +52,34 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
+    await roleManager.CreateAsync(new AppRole{Name = "User"});
+    await roleManager.CreateAsync(new AppRole{Name = "Patient"});
+    await roleManager.CreateAsync(new AppRole{Name = "Doctor"});
+    await roleManager.CreateAsync(new AppRole{Name = "Admin"});
+    
+    var adminUser = new AppUser
+    {
+        UserName = "admin",
+        FirstName = "",
+        LastName = ""
+    };
+    await userManager.CreateAsync(adminUser, "zaq1@WSX");
+
+    await userManager.AddToRoleAsync(adminUser, "Admin");
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occured during seeding process");
+}
 
 app.Run();
