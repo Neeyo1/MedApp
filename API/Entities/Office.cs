@@ -6,16 +6,17 @@ namespace API.Entities;
 public class Office
 {
     public int Id { get; set; }
+    public required string Name { get; set; }
     public required string City { get; set; }
     public required string Street { get; set; }
     public required string Apartment { get; set; }
-    public ICollection<int> MondayHours { get; set; } = [];
-    public ICollection<int> TuesdayHours { get; set; } = [];
-    public ICollection<int> WednesdayHours { get; set; } = [];
-    public ICollection<int> ThursdayHours { get; set; } = [];
-    public ICollection<int> FridayHours { get; set; } = [];
-    public ICollection<int> SaturdayHours { get; set; } = [];
-    public ICollection<int> SundayHours { get; set; } = [];
+    public List<int> MondayHours { get; set; } = [];
+    public List<int> TuesdayHours { get; set; } = [];
+    public List<int> WednesdayHours { get; set; } = [];
+    public List<int> ThursdayHours { get; set; } = [];
+    public List<int> FridayHours { get; set; } = [];
+    public List<int> SaturdayHours { get; set; } = [];
+    public List<int> SundayHours { get; set; } = [];
 
     //Office - Owner(Doctor)
     public int DoctorId { get; set; }
