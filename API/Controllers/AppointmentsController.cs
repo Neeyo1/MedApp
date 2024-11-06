@@ -137,12 +137,57 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
         if (appointment == null) return BadRequest("Could not find appointment");
         if (appointment.IsOpen == true) return BadRequest("Appointment is not closed");
-        if (appointment.Patient != user) return BadRequest("Appointment is not registered on you");
+        if (appointment.HasEnded == true) return BadRequest("Appointment is set as completed");
+        if (appointment.Patient != user) return Unauthorized();
         
         appointment.Patient = null!;
         appointment.IsOpen = true;
 
         if (await appointmentRepository.Complete()) return NoContent();
         return BadRequest("Failed to cancel appointment");
+    }
+
+    [Authorize(Policy = "RequireDoctorRole")]
+    [HttpPost("{appointmentId}/complete")]
+    public async Task<ActionResult> SetAppointmentAsComplete(int appointmentId)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if (appointment == null) return BadRequest("Could not find appointment");
+        if (appointment.IsOpen == true) return BadRequest("Appointment is not closed");
+        if (appointment.HasEnded == true) return BadRequest("Appointment is set as completed");
+        
+        var office = await officeRepository.GetOfficeByIdAsync(appointment.OfficeId);
+        if (office == null) return BadRequest("Office does not exist");
+        if (office.DoctorId != user.Id) return Unauthorized();
+        
+        appointment.HasEnded = true;
+
+        if (await appointmentRepository.Complete()) return NoContent();
+        return BadRequest("Failed to set appointment as completed");
+    }
+
+    [Authorize(Policy = "RequireDoctorRole")]
+    [HttpPost("{appointmentId}/uncomplete")]
+    public async Task<ActionResult> SetAppointmentAsUncomplete(int appointmentId)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        if (appointment == null) return BadRequest("Could not find appointment");
+        if (appointment.IsOpen == true) return BadRequest("Appointment is not closed");
+        if (appointment.HasEnded == false) return BadRequest("Appointment is set as uncompleted");
+        
+        var office = await officeRepository.GetOfficeByIdAsync(appointment.OfficeId);
+        if (office == null) return BadRequest("Office does not exist");
+        if (office.DoctorId != user.Id) return Unauthorized();
+        
+        appointment.HasEnded = false;
+
+        if (await appointmentRepository.Complete()) return NoContent();
+        return BadRequest("Failed to set appointment as uncompleted");
     }
 }
