@@ -37,15 +37,14 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasForeignKey(x => x.DoctorId)
             .IsRequired();
 
-        //AppUser - Office (Appointments)
-        builder.Entity<Appointment>().HasKey(x => new {x.PatientId, x.OfficeId});
-
+        //AppUser - Appointment
         builder.Entity<AppUser>()
             .HasMany(x => x.Appointments)
             .WithOne(x => x.Patient)
             .HasForeignKey(x => x.PatientId)
-            .IsRequired();
+            .IsRequired(false);
 
+        //Office - Appointment
         builder.Entity<Office>()
             .HasMany(x => x.Appointments)
             .WithOne(x => x.Office)

@@ -152,11 +152,11 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Appointment", b =>
                 {
-                    b.Property<int>("PatientId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("OfficeId")
-                        .HasColumnType("int");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime(6)");
@@ -167,15 +167,20 @@ namespace API.Data.Migrations
                     b.Property<bool>("HasEnded")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsOpen")
                         .HasColumnType("tinyint(1)");
 
-                    b.HasKey("PatientId", "OfficeId");
+                    b.Property<int>("OfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PatientId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("OfficeId");
+
+                    b.HasIndex("PatientId");
 
                     b.ToTable("Appointments");
                 });
@@ -388,9 +393,7 @@ namespace API.Data.Migrations
 
                     b.HasOne("API.Entities.AppUser", "Patient")
                         .WithMany("Appointments")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PatientId");
 
                     b.Navigation("Office");
 

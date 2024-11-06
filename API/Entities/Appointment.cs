@@ -12,8 +12,8 @@ public class Appointment
     public bool HasEnded { get; set; } = false;
 
     //Appointment - User(Patient)
-    public int PatientId { get; set; }
-    public AppUser Patient { get; set; } = null!;
+    public int? PatientId { get; set; }
+    public AppUser? Patient { get; set; }
 
     //Appointment - Office
     public int OfficeId { get; set; }
