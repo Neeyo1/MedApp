@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241106114903_ChangePatientAppointmentRelationAsNullable2")]
-    partial class ChangePatientAppointmentRelationAsNullable2
+    [Migration("20241107095237_RebuildDatabase")]
+    partial class RebuildDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -252,11 +252,11 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.Result", b =>
                 {
-                    b.Property<int>("PatientId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("OfficeId")
-                        .HasColumnType("int");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -265,16 +265,21 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("PatientId", "OfficeId");
+                    b.Property<int?>("OfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("OfficeId");
+
+                    b.HasIndex("PatientId");
 
                     b.ToTable("Results");
                 });
@@ -419,8 +424,7 @@ namespace API.Data.Migrations
                     b.HasOne("API.Entities.Office", "Office")
                         .WithMany("Results")
                         .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("API.Entities.AppUser", "Patient")
                         .WithMany("Results")

@@ -249,7 +249,7 @@ namespace API.Data.Migrations
                     DateEnd = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsOpen = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     HasEnded = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    PatientId = table.Column<int>(type: "int", nullable: true),
                     OfficeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -259,8 +259,7 @@ namespace API.Data.Migrations
                         name: "FK_Appointments_AspNetUsers_PatientId",
                         column: x => x.PatientId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Appointments_Offices_OfficeId",
                         column: x => x.OfficeId,
@@ -274,18 +273,19 @@ namespace API.Data.Migrations
                 name: "Results",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    OfficeId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    OfficeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Results", x => new { x.PatientId, x.OfficeId });
+                    table.PrimaryKey("PK_Results", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Results_AspNetUsers_PatientId",
                         column: x => x.PatientId,
@@ -297,7 +297,7 @@ namespace API.Data.Migrations
                         column: x => x.OfficeId,
                         principalTable: "Offices",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -357,6 +357,11 @@ namespace API.Data.Migrations
                 name: "IX_Results_OfficeId",
                 table: "Results",
                 column: "OfficeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_PatientId",
+                table: "Results",
+                column: "PatientId");
         }
 
         /// <inheritdoc />

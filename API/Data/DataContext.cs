@@ -51,19 +51,19 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasForeignKey(x => x.OfficeId)
             .IsRequired();
 
-        //AppUser - Office (Results)
-        builder.Entity<Result>().HasKey(x => new {x.PatientId, x.OfficeId});
-
+        //AppUser - Result
         builder.Entity<AppUser>()
             .HasMany(x => x.Results)
             .WithOne(x => x.Patient)
             .HasForeignKey(x => x.PatientId)
             .IsRequired();
 
+        //Office - Result
         builder.Entity<Office>()
             .HasMany(x => x.Results)
             .WithOne(x => x.Office)
             .HasForeignKey(x => x.OfficeId)
-            .IsRequired();
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
     }
 }

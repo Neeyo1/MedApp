@@ -15,6 +15,6 @@ public class Result
     public AppUser Patient { get; set; } = null!;
 
     //Result - Office
-    public int OfficeId { get; set; }
-    public Office Office { get; set; } = null!;
+    public int? OfficeId { get; set; }
+    public Office? Office { get; set; }
 }

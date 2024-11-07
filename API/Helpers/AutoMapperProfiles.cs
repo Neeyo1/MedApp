@@ -14,6 +14,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<Office, OfficeDto>();
         CreateMap<OfficeCreateDto, Office>();
         CreateMap<Appointment, AppointmentDto>();
+        CreateMap<Result, ResultDto>();
+        CreateMap<ResultCreateDto, Result>();
 
         CreateMap<DateTime, DateTime>().ConvertUsing(x => DateTime.SpecifyKind(x, DateTimeKind.Utc));
         CreateMap<DateTime?, DateTime?>().ConvertUsing(x => x.HasValue 
