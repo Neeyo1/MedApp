@@ -24,4 +24,7 @@ public class AppUser : IdentityUser<int>
 
     //AppUser - Verification
     public Verification? Verification { get; set; }
+
+    //AppUser - ProfilePhoto
+    public ICollection<ProfilePhoto> ProfilePhotos { get; set; } = [];
 }

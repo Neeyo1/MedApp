@@ -73,5 +73,12 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .WithOne(x => x.User)
             .HasForeignKey<Verification>(x => x.UserId)
             .IsRequired();
+
+        //AppUser - ProfilePhoto
+        builder.Entity<AppUser>()
+            .HasMany(x => x.ProfilePhotos)
+            .WithOne(x => x.AppUser)
+            .HasForeignKey(x => x.AppUserId)
+            .IsRequired();
     }
 }

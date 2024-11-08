@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService,
-    IMapper mapper, IUserRepository userRepository, IVerificationRepository verificationRepository) 
-    : BaseApiController
+    IMapper mapper, IUserRepository userRepository, IVerificationRepository verificationRepository,
+    IPhotoService photoService) : BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -39,6 +39,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await userManager.Users
+            .Include(p => p.ProfilePhotos)
             .SingleOrDefaultAsync(x => x.NormalizedUserName == loginDto.Username.ToUpper());
         if (user == null || user.UserName == null) return BadRequest("Invalid username or password");
         if (!await userManager.CheckPasswordAsync(user, loginDto.Password))
@@ -71,6 +72,70 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
         if (await verificationRepository.Complete()) return NoContent();
         return BadRequest("Failed to add to verification queue");
+    }
+    
+    [Authorize]
+    [HttpPost("add-photo")]
+    public async Task<ActionResult<ProfilePhotoDto>> AddPhoto(IFormFile file)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var result = await photoService.AddPhotoAsync(file);
+        if (result.Error != null) return BadRequest(result.Error.Message);
+
+        var photo = new ProfilePhoto
+        {
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId
+        };
+        if (user.ProfilePhotos.Count == 0) photo.IsMain = true;
+
+        user.ProfilePhotos.Add(photo);
+
+        if (await userRepository.Complete()) return mapper.Map<ProfilePhotoDto>(photo);
+        return BadRequest("Failed to add photo");
+    }
+
+    [Authorize]
+    [HttpPut("set-main-photo/{photoId}")]
+    public async Task<ActionResult> SetMainPhoto(int photoId)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var photo = user.ProfilePhotos.FirstOrDefault(x => x.Id == photoId);
+        if (photo == null || photo.IsMain) return BadRequest("Could not use this as main photo");
+        
+        var currentMain = user.ProfilePhotos.FirstOrDefault(x => x.IsMain);
+        if (currentMain != null) currentMain.IsMain = false;
+
+        photo.IsMain = true;
+
+        if (await userRepository.Complete()) return NoContent();
+        return BadRequest("Could not not set main photo");
+    }
+
+    [Authorize]
+    [HttpDelete("delete-photo/{photoId}")]
+    public async Task<ActionResult> DeletePhoto(int photoId)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var photo = user.ProfilePhotos.FirstOrDefault(x => x.Id == photoId);
+        if (photo == null || photo.IsMain) return BadRequest("Could not delete this photo");
+
+        if (photo.PublicId != null)
+        {
+            var result = await photoService.DeletePhotoAsync(photo.PublicId);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+        }
+
+        user.ProfilePhotos.Remove(photo);
+
+        if (await userRepository.Complete()) return NoContent();
+        return BadRequest("Could not not delete photo");
     }
 
     private async Task<bool> UserExists(string username)
