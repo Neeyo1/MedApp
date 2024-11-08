@@ -21,4 +21,7 @@ public class AppUser : IdentityUser<int>
 
     //AppUser(Patient) - Result
     public ICollection<Result> Results { get; set; } = [];
+
+    //AppUser - Verification
+    public Verification? Verification { get; set; }
 }

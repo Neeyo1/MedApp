@@ -1,7 +1,9 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService,
-    IMapper mapper) : BaseApiController
+    IMapper mapper, IUserRepository userRepository, IVerificationRepository verificationRepository) 
+    : BaseApiController
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -31,7 +34,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
         return userToReturn;
     }
-
+    
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
@@ -45,6 +48,29 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         userToReturn.Token = await tokenService.CreateToken(user);
 
         return userToReturn;
+    }
+
+    [Authorize(Policy = "RequirePatientRole")]
+    [HttpPost("verify")]
+    public async Task<ActionResult> AskForVerification()
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var userRoles = await userManager.GetRolesAsync(user);
+        if (!userRoles.Contains("Patient")) return Unauthorized();
+
+        if (await verificationRepository.GetVerificationByUserIdAsync(user.Id) != null)
+            return BadRequest("Your verifications is already in process");
+
+        var verification = new Verification
+        {
+            User = user
+        };
+        verificationRepository.AddVerification(verification);
+
+        if (await verificationRepository.Complete()) return NoContent();
+        return BadRequest("Failed to add to verification queue");
     }
 
     private async Task<bool> UserExists(string username)

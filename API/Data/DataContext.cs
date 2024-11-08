@@ -12,6 +12,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
     public DbSet<Office> Offices { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Result> Results { get; set; }
+    public DbSet<Verification> Verifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -65,5 +66,12 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasForeignKey(x => x.OfficeId)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
+
+        //AppUser - Verification
+        builder.Entity<AppUser>()
+            .HasOne(x => x.Verification)
+            .WithOne(x => x.User)
+            .HasForeignKey<Verification>(x => x.UserId)
+            .IsRequired();
     }
 }
