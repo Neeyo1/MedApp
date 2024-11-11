@@ -135,7 +135,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         user.ProfilePhotos.Remove(photo);
 
         if (await userRepository.Complete()) return NoContent();
-        return BadRequest("Could not not delete photo");
+        return BadRequest("Could not delete photo");
     }
 
     private async Task<bool> UserExists(string username)
