@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -31,12 +32,33 @@ public class OfficeRepository(DataContext context, IMapper mapper) : IOfficeRepo
             .SingleOrDefaultAsync(x => x.Name == officeName);
     }
 
-    public async Task<IEnumerable<OfficeDto>> GetOfficesAsync(int userId)
+    public async Task<PagedList<OfficeDto>> GetOfficesAsync(OfficeParams officeParams)
     {
-        return await context.Offices
-            .Where(x => x.DoctorId == userId)
-            .ProjectTo<OfficeDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Offices.AsQueryable();
+        query = query.Where(x => x.DoctorId == officeParams.DoctorId);
+
+        if (officeParams.City != null)
+        {
+            query = query.Where(x => x.City == officeParams.City);
+        }
+
+        return await PagedList<OfficeDto>.CreateAsync(
+            query.ProjectTo<OfficeDto>(mapper.ConfigurationProvider), 
+            officeParams.PageNumber, officeParams.PageSize);
+    }
+
+    public async Task<PagedList<OfficeDto>> GetAllOfficesAsync(OfficeParams officeParams)
+    {
+        var query = context.Offices.AsQueryable();
+
+        if (officeParams.City != null)
+        {
+            query = query.Where(x => x.City == officeParams.City);
+        }
+
+        return await PagedList<OfficeDto>.CreateAsync(
+            query.ProjectTo<OfficeDto>(mapper.ConfigurationProvider), 
+            officeParams.PageNumber, officeParams.PageSize);
     }
 
     public async Task<bool> Complete()

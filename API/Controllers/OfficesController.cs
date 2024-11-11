@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,25 @@ public class OfficesController(IOfficeRepository officeRepository, IUserReposito
     IMapper mapper) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OfficeDto>>> GetOffices([FromQuery] int userId)
+    public async Task<ActionResult<PagedList<OfficeDto>>> GetOffices([FromQuery] OfficeParams officeParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var offices = await officeRepository.GetOfficesAsync(userId);
+        var offices = await officeRepository.GetOfficesAsync(officeParams);
+        Response.AddPaginationHeader(offices);
+
+        return Ok(offices);
+    }
+
+    [HttpGet("all")]
+    public async Task<ActionResult<PagedList<OfficeDto>>> GetAllOffices([FromQuery] OfficeParams officeParams)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var offices = await officeRepository.GetAllOfficesAsync(officeParams);
+        Response.AddPaginationHeader(offices);
 
         return Ok(offices);
     }

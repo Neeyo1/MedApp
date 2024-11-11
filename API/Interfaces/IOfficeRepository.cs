@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces;
 
@@ -9,6 +10,7 @@ public interface IOfficeRepository
     void DeleteOffice(Office office);
     Task<Office?> GetOfficeByIdAsync(int officeId);
     Task<Office?> GetOfficeByOfficeNameAsync(string officeName);
-    Task<IEnumerable<OfficeDto>> GetOfficesAsync(int userId);
+    Task<PagedList<OfficeDto>> GetOfficesAsync(OfficeParams officeParams);
+    Task<PagedList<OfficeDto>> GetAllOfficesAsync(OfficeParams officeParams);
     Task<bool> Complete();
 }

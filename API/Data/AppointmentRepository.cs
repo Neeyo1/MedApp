@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -25,21 +26,40 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
             .FindAsync(appointmentId);
     }
 
-    public async Task<IEnumerable<AppointmentDto>> GetAppointmentsAsync(int officeId)
+    public async Task<PagedList<AppointmentDto>> GetAppointmentsAsync(AppointmentParams appointmentParams)
     {
-        return await context.Appointments
-            .Where(x => x.OfficeId == officeId)
-            .ProjectTo<AppointmentDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Appointments.AsQueryable();
+        query = query.Where(x => x.OfficeId == appointmentParams.OfficeId);
+
+        query = appointmentParams.Status switch
+        {
+            "open" => query.Where(x => x.IsOpen == true),
+            "close" => query.Where(x => x.IsOpen == false),
+            _ => query
+        };
+
+        return await PagedList<AppointmentDto>.CreateAsync(
+            query.ProjectTo<AppointmentDto>(mapper.ConfigurationProvider), 
+            appointmentParams.PageNumber, appointmentParams.PageSize);
     }
 
-    public async Task<IEnumerable<AppointmentDto>> GetAppointmentsInMonthAsync(int officeId, 
-        int year, int month)
+    public async Task<PagedList<AppointmentDto>> GetAppointmentsInMonthAsync(AppointmentParams appointmentParams)
     {
-        return await context.Appointments
-            .Where(x => x.OfficeId == officeId && x.DateStart.Year == year && x.DateStart.Month == month)
-            .ProjectTo<AppointmentDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Appointments.AsQueryable();
+        query = query.Where(x => x.OfficeId == appointmentParams.OfficeId 
+            && x.DateStart.Year == appointmentParams.Year
+            && x.DateStart.Month == appointmentParams.Month);
+
+        query = appointmentParams.Status switch
+        {
+            "open" => query.Where(x => x.IsOpen == true),
+            "close" => query.Where(x => x.IsOpen == false),
+            _ => query
+        };
+
+        return await PagedList<AppointmentDto>.CreateAsync(
+            query.ProjectTo<AppointmentDto>(mapper.ConfigurationProvider), 
+            appointmentParams.PageNumber, appointmentParams.PageSize);
     }
 
     public async Task<bool> IsAppointmentExisting(int officeId, DateTime dateStart)

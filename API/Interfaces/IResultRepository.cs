@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces;
 
@@ -8,8 +9,9 @@ public interface IResultRepository
     void AddResult(Result result);
     void DeleteResult(Result result);
     Task<Result?> GetResultByIdAsync(int resultId);
-    Task<IEnumerable<ResultDto>> GetAllResultsAsDoctorAsync(int doctorId);
-    Task<IEnumerable<ResultDto>> GetResultsForPatientAsDoctorAsync(int doctorId, int patientId);
-    Task<IEnumerable<ResultDto>> GetAllResultsAsPatientAsync(int patientId);
+    Task<PagedList<ResultDto>> GetAllResultsAsDoctorAsync(int doctorId, ResultParams resultParams);
+    Task<PagedList<ResultDto>> GetResultsForPatientAsDoctorAsync(int doctorId, int patientId, 
+        ResultParams resultParams);
+    Task<PagedList<ResultDto>> GetAllResultsAsPatientAsync(int patientId, ResultParams resultParams);
     Task<bool> Complete();
 }

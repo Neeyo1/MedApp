@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -25,26 +26,53 @@ public class ResultRepository(DataContext context, IMapper mapper) : IResultRepo
             .FindAsync(resultId);
     }
 
-    public async Task<IEnumerable<ResultDto>> GetAllResultsAsDoctorAsync(int doctorId)
+    public async Task<PagedList<ResultDto>> GetAllResultsAsDoctorAsync(int doctorId, 
+        ResultParams resultParams)
     {
-        return await context.Results
-            .Where(x => x.Office != null && x.Office.DoctorId == doctorId)
-            .ProjectTo<ResultDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Results.AsQueryable();
+        query = query.Where(x => x.Office != null && x.Office.DoctorId == doctorId);
+
+        query = resultParams.OrderBy switch
+        {
+            "newest" => query.OrderByDescending(x => x.CreatedAt),
+            _ => query.OrderBy(x => x.CreatedAt)
+        };
+
+        return await PagedList<ResultDto>.CreateAsync(
+            query.ProjectTo<ResultDto>(mapper.ConfigurationProvider), 
+            resultParams.PageNumber, resultParams.PageSize);
     }
-    public async Task<IEnumerable<ResultDto>> GetResultsForPatientAsDoctorAsync(int doctorId, int patientId)
+    public async Task<PagedList<ResultDto>> GetResultsForPatientAsDoctorAsync(int doctorId, int patientId,
+        ResultParams resultParams)
     {
-        return await context.Results
-            .Where(x => x.Office != null && x.Office.DoctorId == doctorId && x.PatientId == patientId)
-            .ProjectTo<ResultDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Results.AsQueryable();
+        query = query.Where(x => x.Office != null && x.Office.DoctorId == doctorId && x.PatientId == patientId);
+
+        query = resultParams.OrderBy switch
+        {
+            "newest" => query.OrderByDescending(x => x.CreatedAt),
+            _ => query.OrderBy(x => x.CreatedAt)
+        };
+
+        return await PagedList<ResultDto>.CreateAsync(
+            query.ProjectTo<ResultDto>(mapper.ConfigurationProvider), 
+            resultParams.PageNumber, resultParams.PageSize);
     }
-    public async Task<IEnumerable<ResultDto>> GetAllResultsAsPatientAsync(int patientId)
+    public async Task<PagedList<ResultDto>> GetAllResultsAsPatientAsync(int patientId, 
+        ResultParams resultParams)
     {
-        return await context.Results
-            .Where(x => x.PatientId == patientId)
-            .ProjectTo<ResultDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Results.AsQueryable();
+        query = query.Where(x => x.PatientId == patientId);
+
+        query = resultParams.OrderBy switch
+        {
+            "newest" => query.OrderByDescending(x => x.CreatedAt),
+            _ => query.OrderBy(x => x.CreatedAt)
+        };
+
+        return await PagedList<ResultDto>.CreateAsync(
+            query.ProjectTo<ResultDto>(mapper.ConfigurationProvider), 
+            resultParams.PageNumber, resultParams.PageSize);
     }
     public async Task<bool> Complete()
     {

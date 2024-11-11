@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,20 +14,22 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
     IUserRepository userRepository, IOfficeRepository officeRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAppointmentsInMonth(
-        [FromQuery] int officeId, int year, int month)
+    public async Task<ActionResult<PagedList<AppointmentDto>>> GetAppointmentsInMonth(
+        [FromQuery] AppointmentParams appointmentParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        if (year == 0 && month == 0)
+        if (appointmentParams.Year == 0 && appointmentParams.Month == 0)
         {
-            var appointments = await appointmentRepository.GetAppointmentsAsync(officeId);
+            var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
+            Response.AddPaginationHeader(appointments);
             return Ok(appointments);
         }
         else
         {
-            var appointments = await appointmentRepository.GetAppointmentsInMonthAsync(officeId, year, month);
+            var appointments = await appointmentRepository.GetAppointmentsInMonthAsync(appointmentParams);
+            Response.AddPaginationHeader(appointments);
             return Ok(appointments);
         } 
     }
