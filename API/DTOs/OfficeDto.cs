@@ -15,5 +15,4 @@ public class OfficeDto
     public IEnumerable<int> SaturdayHours { get; set; } = [];
     public IEnumerable<int> SundayHours { get; set; } = [];
     public MemberDto Doctor { get; set; } = null!;
-    public IEnumerable<AppointmentDto> Appointments { get; set; } = [];
 }
