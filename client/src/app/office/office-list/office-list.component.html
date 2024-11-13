@@ -1,0 +1,64 @@
+<div class="container mt-3">
+    <form #form="ngForm" (ngSubmit)="loadOffices()" class="d-flex flex-wrap mb-3">
+          <div class="d-flex">
+              <label class="col-form-label">Doctor Id</label>
+              <input type="number" 
+                  class="form-control ms-1" 
+                  name="doctorId"
+                  [(ngModel)]="officeService.officeParams().doctorId"
+              >
+          </div>
+  
+          <div class="d-flex">
+              <label class="col-form-label">City</label>
+              <input type="text" 
+                  class="form-control ms-1" 
+                  name="city"
+                  [(ngModel)]="officeService.officeParams().city"
+              >
+          </div>
+
+          <div class="d-flex">
+            <button class="btn btn-dark" type="submit">Filter</button>
+          </div>
+
+          <div class="d-flex">
+            <button (click)="resetFilters()" class="btn btn-dark" type="button">Reset</button>
+          </div>
+    </form>
+  </div>
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Address</th>
+          <th scope="col">Doctor</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (office of officeService.paginatedResult()?.items; track office.id) {
+              <tr routerLink="/offices/{{office.id}}">
+                  <td>{{office.name}}</td>
+                  <td>{{office.city}}, {{office.street}} {{office.apartment}}</td>
+                  <td>{{office.doctor.firstName}} {{office.doctor.lastName}}</td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (officeService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="officeService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="officeService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="officeService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }
