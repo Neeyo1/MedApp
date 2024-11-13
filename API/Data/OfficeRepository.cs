@@ -35,7 +35,11 @@ public class OfficeRepository(DataContext context, IMapper mapper) : IOfficeRepo
     public async Task<PagedList<OfficeDto>> GetOfficesAsync(OfficeParams officeParams)
     {
         var query = context.Offices.AsQueryable();
-        query = query.Where(x => x.DoctorId == officeParams.DoctorId);
+
+        if (officeParams.DoctorId != 0)
+        {
+            query = query.Where(x => x.DoctorId == officeParams.DoctorId);
+        }
 
         if (officeParams.City != null)
         {
