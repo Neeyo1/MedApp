@@ -27,4 +27,7 @@ public class Office
 
     //Office - Result
     public ICollection<Result> Results { get; set; } = [];
+
+    //Office - OfficeSpecialization
+    public ICollection<OfficeSpecialization> OfficeSpecializations { get; set; } = [];
 }

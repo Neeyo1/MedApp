@@ -13,6 +13,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Result> Results { get; set; }
     public DbSet<Verification> Verifications { get; set; }
+    public DbSet<Specialization> Specializations { get; set; }
+    public DbSet<OfficeSpecialization> OfficeSpecializations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -79,6 +81,21 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasMany(x => x.ProfilePhotos)
             .WithOne(x => x.AppUser)
             .HasForeignKey(x => x.AppUserId)
+            .IsRequired();
+
+        //Office - Specialization
+        builder.Entity<OfficeSpecialization>().HasKey(x => new {x.OfficeId, x.SpecializationId});
+
+        builder.Entity<Office>()
+            .HasMany(x => x.OfficeSpecializations)
+            .WithOne(x => x.Office)
+            .HasForeignKey(x => x.OfficeId)
+            .IsRequired();
+
+        builder.Entity<Specialization>()
+            .HasMany(x => x.OfficeSpecializations)
+            .WithOne(x => x.Specialization)
+            .HasForeignKey(x => x.SpecializationId)
             .IsRequired();
     }
 }

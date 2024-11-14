@@ -27,6 +27,8 @@ public class AutoMapperProfiles : Profile
             .ForMember(x => x.FirstName, y => y.MapFrom(z => z.User == null ? null : z.User.FirstName))
             .ForMember(x => x.LastName, y => y.MapFrom(z => z.User == null ? null : z.User.LastName));
         CreateMap<ProfilePhoto, ProfilePhotoDto>();
+        CreateMap<Specialization, SpecializationDto>();
+        CreateMap<SpecializationCreateDto, Specialization>();
 
         CreateMap<DateTime, DateTime>().ConvertUsing(x => DateTime.SpecifyKind(x, DateTimeKind.Utc));
         CreateMap<DateTime?, DateTime?>().ConvertUsing(x => x.HasValue 
