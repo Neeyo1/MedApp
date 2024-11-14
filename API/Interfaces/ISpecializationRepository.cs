@@ -11,5 +11,6 @@ public interface ISpecializationRepository
     Task<Specialization?> GetSpecializationByNameAsync(string specializationName);
     Task<IEnumerable<SpecializationDto>> GetSpecializationsAsync();
     Task<bool> IsSpecializationExisting(string specializationName);
+    Task<OfficeSpecialization?> GetOfficeSpecializationByIdAsync(int officeId, int specializationId);
     Task<bool> Complete();
 }

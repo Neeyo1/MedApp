@@ -11,7 +11,7 @@ namespace API.Controllers;
 
 [Authorize]
 public class OfficesController(IOfficeRepository officeRepository, IUserRepository userRepository,
-    IMapper mapper) : BaseApiController
+    IMapper mapper, ISpecializationRepository specializationRepository) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<OfficeDto>>> GetOffices([FromQuery] OfficeParams officeParams)
@@ -60,6 +60,18 @@ public class OfficesController(IOfficeRepository officeRepository, IUserReposito
 
         var office = mapper.Map<Office>(officeCreateDto);
         office.Doctor = user;
+        foreach (var specializationId in officeCreateDto.Specializations)
+        {
+            if (await specializationRepository.GetSpecializationByIdAsync(specializationId) != null)
+            {   
+                var officeSpecialization = new OfficeSpecialization
+                {
+                    OfficeId = office.Id,
+                    SpecializationId = specializationId
+                };
+                office.OfficeSpecializations.Add(officeSpecialization);
+            }
+        }
 
         officeRepository.AddOffice(office);
 
@@ -80,6 +92,32 @@ public class OfficesController(IOfficeRepository officeRepository, IUserReposito
         if (office.DoctorId != user.Id) return Unauthorized();
 
         mapper.Map(officeEditDto, office);
+        var currentSpecializations = office.OfficeSpecializations.Select(x => x.SpecializationId).ToList();
+        var specializationsToRemove = currentSpecializations.Except(officeEditDto.Specializations);
+        var specializationsToAdd = officeEditDto.Specializations.Except(currentSpecializations);
+        foreach (var specializationId in specializationsToRemove)
+        {
+            var officeSpecialization = await specializationRepository.GetOfficeSpecializationByIdAsync(
+                officeId, specializationId);
+            
+            if (officeSpecialization != null)
+            {   
+                office.OfficeSpecializations.Remove(officeSpecialization);
+            }
+        }
+
+        foreach (var specializationId in specializationsToAdd)
+        {
+            if (await specializationRepository.GetSpecializationByIdAsync(specializationId) != null)
+            {   
+                var officeSpecialization = new OfficeSpecialization
+                {
+                    OfficeId = office.Id,
+                    SpecializationId = specializationId
+                };
+                office.OfficeSpecializations.Add(officeSpecialization);
+            }
+        }
 
         if (await officeRepository.Complete()) return Ok(mapper.Map<OfficeDto>(office));
         return BadRequest("Failed to edit office");

@@ -17,7 +17,11 @@ public class AutoMapperProfiles : Profile
             .ForMember(
                 x => x.ProfilePhotoUrl, y => y.MapFrom(z => z.ProfilePhotos.FirstOrDefault(p => p.IsMain)!.Url)
             );
-        CreateMap<Office, OfficeDto>();
+        CreateMap<Office, OfficeDto>()
+            .ForMember(
+                x => x.Specializations, y => y.MapFrom(z => z.OfficeSpecializations.Select(
+                    s => s.Specialization.Name).ToList())
+            );
         CreateMap<OfficeCreateDto, Office>();
         CreateMap<Appointment, AppointmentDto>();
         CreateMap<Result, ResultDto>();

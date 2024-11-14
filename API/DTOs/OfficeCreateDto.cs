@@ -15,4 +15,5 @@ public class OfficeCreateDto
     public IEnumerable<int> FridayHours { get; set; } = [];
     public IEnumerable<int> SaturdayHours { get; set; } = [];
     public IEnumerable<int> SundayHours { get; set; } = [];
+    public IEnumerable<int> Specializations { get; set; } = [];
 }

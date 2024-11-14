@@ -23,12 +23,16 @@ public class OfficeRepository(DataContext context, IMapper mapper) : IOfficeRepo
     public async Task<Office?> GetOfficeByIdAsync(int officeId)
     {
         return await context.Offices
+            .Include(x => x.OfficeSpecializations)
+            .ThenInclude(x => x.Specialization)
             .FirstOrDefaultAsync(x => x.Id == officeId);
     }
 
     public async Task<Office?> GetOfficeByOfficeNameAsync(string officeName)
     {
         return await context.Offices
+            .Include(x => x.OfficeSpecializations)
+            .ThenInclude(x => x.Specialization)
             .SingleOrDefaultAsync(x => x.Name == officeName);
     }
 

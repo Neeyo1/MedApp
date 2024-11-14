@@ -43,6 +43,13 @@ public class SpecializationRepository(DataContext context, IMapper mapper) : ISp
         return await GetSpecializationByNameAsync(specializationName) != null;
     }
 
+    public async Task<OfficeSpecialization?> GetOfficeSpecializationByIdAsync(
+        int officeId, int specializationId)
+    {
+        return await context.OfficeSpecializations
+            .FirstOrDefaultAsync(x => x.OfficeId == officeId && x.SpecializationId == specializationId);
+    }
+
     public async Task<bool> Complete()
     {
         return await context.SaveChangesAsync() > 0;
