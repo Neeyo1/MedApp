@@ -50,6 +50,12 @@ public class OfficeRepository(DataContext context, IMapper mapper) : IOfficeRepo
             query = query.Where(x => x.City == officeParams.City);
         }
 
+        if (officeParams.SpecializationId != 0)
+        {
+            query = query.Where(x => x.OfficeSpecializations.Select(
+                y => y.SpecializationId).ToList().Contains(officeParams.SpecializationId));
+        }
+
         return await PagedList<OfficeDto>.CreateAsync(
             query.ProjectTo<OfficeDto>(mapper.ConfigurationProvider), 
             officeParams.PageNumber, officeParams.PageSize);
