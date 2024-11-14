@@ -61,20 +61,6 @@ public class OfficeRepository(DataContext context, IMapper mapper) : IOfficeRepo
             officeParams.PageNumber, officeParams.PageSize);
     }
 
-    public async Task<PagedList<OfficeDto>> GetAllOfficesAsync(OfficeParams officeParams)
-    {
-        var query = context.Offices.AsQueryable();
-
-        if (officeParams.City != null)
-        {
-            query = query.Where(x => x.City == officeParams.City);
-        }
-
-        return await PagedList<OfficeDto>.CreateAsync(
-            query.ProjectTo<OfficeDto>(mapper.ConfigurationProvider), 
-            officeParams.PageNumber, officeParams.PageSize);
-    }
-
     public async Task<bool> Complete()
     {
         return await context.SaveChangesAsync() > 0;

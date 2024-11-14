@@ -11,6 +11,5 @@ public interface IOfficeRepository
     Task<Office?> GetOfficeByIdAsync(int officeId);
     Task<Office?> GetOfficeByOfficeNameAsync(string officeName);
     Task<PagedList<OfficeDto>> GetOfficesAsync(OfficeParams officeParams);
-    Task<PagedList<OfficeDto>> GetAllOfficesAsync(OfficeParams officeParams);
     Task<bool> Complete();
 }

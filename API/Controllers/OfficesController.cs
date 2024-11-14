@@ -25,18 +25,6 @@ public class OfficesController(IOfficeRepository officeRepository, IUserReposito
         return Ok(offices);
     }
 
-    [HttpGet("all")]
-    public async Task<ActionResult<PagedList<OfficeDto>>> GetAllOffices([FromQuery] OfficeParams officeParams)
-    {
-        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
-        if (user == null) return BadRequest("Could not find user");
-
-        var offices = await officeRepository.GetAllOfficesAsync(officeParams);
-        Response.AddPaginationHeader(offices);
-
-        return Ok(offices);
-    }
-
     [HttpGet("{officeId}")]
     public async Task<ActionResult<OfficeDto>> GetOffice(int officeId)
     {
