@@ -1,0 +1,47 @@
+<div>
+    <tabset>
+      <tab heading="Office info">
+        <h5 class="mt-1">Office info</h5>
+        <p>Office name: {{office()?.name}}</p>
+        <p>Office Address: {{office()?.city}}, {{office()?.street}} {{office()?.apartment}}</p>
+        <p>Office name: {{office()?.name}}</p>
+        <p>Doctor: {{office()?.doctor?.firstName}} {{office()?.doctor?.lastName}}</p>
+      </tab>
+      <tab heading="Appointments" (selectTab)="loadAppointments()">
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+                @for (appointment of appointmentService.paginatedResult()?.items; track appointment.id) {
+                    <tr routerLink="/appointments/{{appointment.id}}">
+                        <td>{{appointment.id}}</td>
+                        <td>{{appointment.dateStart | date:'yyyy-M-dd hh:mm'}} - {{appointment.dateEnd | date:'hh:mm'}}</td>
+                        <td>{{appointment.isOpen == true ? "Available" : "Non-available"}}</td>
+                    </tr>
+                }
+            </tbody>
+          </table>
+        
+        @if (appointmentService.paginatedResult()?.pagination) {
+            <div class="d-flex justify-content-center">
+                <pagination [boundaryLinks]="true" 
+                            [totalItems]="appointmentService.paginatedResult()?.pagination!.totalItems"
+                            [itemsPerPage]="appointmentService.paginatedResult()?.pagination!.itemsPerPage"
+                            (pageChanged)="pageChanged($event)"
+                            [(ngModel)]="appointmentService.paginatedResult()?.pagination!.currentPage"
+                            [maxSize]="10"
+                            previousText="&lsaquo;" 
+                            nextText="&rsaquo;" 
+                            firstText="&laquo;" 
+                            lastText="&raquo;">
+                </pagination>   
+            </div>
+        }
+      </tab>
+    </tabset>
+</div>
