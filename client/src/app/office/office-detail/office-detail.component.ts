@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { OfficeService } from '../../_services/office.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -13,11 +13,11 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-office-detail',
   standalone: true,
-  imports: [TabsModule, PaginationModule, RouterLink, FormsModule, DatePipe],
+  imports: [TabsModule, PaginationModule, FormsModule, DatePipe],
   templateUrl: './office-detail.component.html',
   styleUrl: './office-detail.component.css'
 })
-export class OfficeDetailComponent implements OnInit{
+export class OfficeDetailComponent implements OnInit, OnDestroy{
   private officeService = inject(OfficeService);
   appointmentService = inject(AppointmentService);
   private route = inject(ActivatedRoute);
@@ -28,6 +28,10 @@ export class OfficeDetailComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadOffice();
+  }
+
+  ngOnDestroy(): void {
+    this.appointmentService.paginatedResult.set(null);
   }
 
   loadOffice(){
@@ -45,6 +49,31 @@ export class OfficeDetailComponent implements OnInit{
 
     this.appointmentService.appointmentParams().officeId = officeId;
     this.appointmentService.getAppointments();
+  }
+
+  bookAppointment(appointmentId: number){
+    this.appointmentService.bookAppointment(appointmentId).subscribe({
+      next: _ => this.loadAppointments(),
+      error: error => this.toastrServie.error(error.error)
+    });
+  }
+
+  cancelAppointment(appointmentId: number){
+    this.appointmentService.cancelAppointment(appointmentId).subscribe({
+      next: _ => this.loadAppointments(),
+      error: error => this.toastrServie.error(error.error)
+    });
+  }
+
+  editAppointment(appointmentId: number){
+    console.log("Edit modal");
+  }
+
+  deleteAppointment(appointmentId: number){
+    this.appointmentService.deleteAppointment(appointmentId).subscribe({
+      next: _ => this.loadAppointments(),
+      error: error => this.toastrServie.error(error.error)
+    });
   }
 
   pageChanged(event: any){

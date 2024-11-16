@@ -14,24 +14,32 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
     IUserRepository userRepository, IOfficeRepository officeRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<PagedList<AppointmentDto>>> GetAppointmentsInMonth(
+    public async Task<ActionResult<PagedList<AppointmentDto>>> GetAppointments(
         [FromQuery] AppointmentParams appointmentParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        if (appointmentParams.Year == 0 && appointmentParams.Month == 0)
-        {
-            var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
-            Response.AddPaginationHeader(appointments);
-            return Ok(appointments);
-        }
-        else
-        {
-            var appointments = await appointmentRepository.GetAppointmentsInMonthAsync(appointmentParams);
-            Response.AddPaginationHeader(appointments);
-            return Ok(appointments);
-        } 
+        appointmentParams.PatientId = 0;
+
+        var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
+        Response.AddPaginationHeader(appointments);
+        return Ok(appointments);
+    }
+
+    [Authorize(Policy = "RequirePatientRole")]
+    [HttpGet("my")]
+    public async Task<ActionResult<PagedList<AppointmentDto>>> GetMyAppointmentsAsPatient(
+        [FromQuery] AppointmentParams appointmentParams)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        appointmentParams.PatientId = user.Id;
+
+        var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
+        Response.AddPaginationHeader(appointments);
+        return Ok(appointments);
     }
 
     [HttpGet("{appointmentId}")]

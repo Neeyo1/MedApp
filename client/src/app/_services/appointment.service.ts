@@ -15,9 +15,14 @@ export class AppointmentService {
   appointmentCache = new Map();
   paginatedResult = signal<PaginatedResult<Appointment[]> | null>(null);
   appointmentParams = signal<AppointmentParams>(new AppointmentParams);
+  myAppointmentAsPatientParams = signal<AppointmentParams>(new AppointmentParams);
 
   resetAppointmentParams(){
     this.appointmentParams.set(new AppointmentParams);
+  }
+
+  resetMyAppointmentAsPatientParams(){
+    this.myAppointmentAsPatientParams.set(new AppointmentParams);
   }
 
   getAppointments(){
@@ -40,6 +45,26 @@ export class AppointmentService {
     });
   }
 
+  getMyAppointmentsAsPatient(){
+    const response = this.appointmentCache.get('myAsPatient-' + Object.values(this.myAppointmentAsPatientParams()).join('-'));
+
+    if (response) return this.setPaginatedResponse(response);
+    let params = this.setPaginationHeaders(this.myAppointmentAsPatientParams().pageNumber, this.myAppointmentAsPatientParams().pageSize)
+
+    if (this.myAppointmentAsPatientParams().status) params = params.append("status", this.myAppointmentAsPatientParams().status as string);
+    if (this.myAppointmentAsPatientParams().orderBy) params = params.append("orderBy", this.myAppointmentAsPatientParams().orderBy as string);
+    params = params.append("officeId", this.myAppointmentAsPatientParams().officeId);
+    params = params.append("month", this.myAppointmentAsPatientParams().month);
+    params = params.append("year", this.myAppointmentAsPatientParams().year);
+
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/my", {observe: 'response', params}).subscribe({
+      next: response => {
+        this.setPaginatedResponse(response);
+        this.appointmentCache.set('myAsPatient-' + Object.values(this.myAppointmentAsPatientParams()).join("-"), response);
+      }
+    });
+  }
+
   getAppointment(id: number){
     const appointment: Appointment = [...this.appointmentCache.values()]
       .reduce((arr, elem) => arr.concat(elem.body), [])
@@ -54,7 +79,6 @@ export class AppointmentService {
     return this.http.post<Appointment>(this.baseUrl + "appointments", model).pipe(
       tap(() => {
         this.appointmentCache.clear();
-        this.getAppointments();
       })
     );
   }
@@ -63,7 +87,6 @@ export class AppointmentService {
     return this.http.put<Appointment>(this.baseUrl + `appointments/${appointmentId}`, model).pipe(
       tap(() => {
         this.appointmentCache.clear();
-        this.getAppointments();
       })
     );
   }
@@ -72,7 +95,22 @@ export class AppointmentService {
     return this.http.delete(this.baseUrl + `appointments/${appointmentId}`).pipe(
       tap(() => {
         this.appointmentCache.clear();
-        this.getAppointments();
+      })
+    );
+  }
+
+  bookAppointment(appointmentId: number){
+    return this.http.post(this.baseUrl + `appointments/${appointmentId}/register`, {}).pipe(
+      tap(() => {
+        this.appointmentCache.clear();
+      })
+    );
+  }
+
+  cancelAppointment(appointmentId: number){
+    return this.http.post(this.baseUrl + `appointments/${appointmentId}/cancel`, {}).pipe(
+      tap(() => {
+        this.appointmentCache.clear();
       })
     );
   }

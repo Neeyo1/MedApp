@@ -29,26 +29,26 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
     public async Task<PagedList<AppointmentDto>> GetAppointmentsAsync(AppointmentParams appointmentParams)
     {
         var query = context.Appointments.AsQueryable();
-        query = query.Where(x => x.OfficeId == appointmentParams.OfficeId);
 
-        query = appointmentParams.Status switch
+        if (appointmentParams.OfficeId != 0)
         {
-            "open" => query.Where(x => x.IsOpen == true),
-            "close" => query.Where(x => x.IsOpen == false),
-            _ => query
-        };
+            query = query.Where(x => x.OfficeId == appointmentParams.OfficeId);
+        }
 
-        return await PagedList<AppointmentDto>.CreateAsync(
-            query.ProjectTo<AppointmentDto>(mapper.ConfigurationProvider), 
-            appointmentParams.PageNumber, appointmentParams.PageSize);
-    }
+        if (appointmentParams.PatientId != 0)
+        {
+            query = query.Where(x => x.PatientId == appointmentParams.PatientId);
+        }
 
-    public async Task<PagedList<AppointmentDto>> GetAppointmentsInMonthAsync(AppointmentParams appointmentParams)
-    {
-        var query = context.Appointments.AsQueryable();
-        query = query.Where(x => x.OfficeId == appointmentParams.OfficeId 
-            && x.DateStart.Year == appointmentParams.Year
-            && x.DateStart.Month == appointmentParams.Month);
+        if (appointmentParams.Year != 0)
+        {
+            query = query.Where(x => x.DateStart.Year == appointmentParams.Year);
+        }
+
+        if (appointmentParams.Month != 0)
+        {
+            query = query.Where(x => x.DateStart.Month == appointmentParams.Month);
+        }
 
         query = appointmentParams.Status switch
         {
