@@ -1,1 +1,10 @@
-<p>home works!</p>
+<p>You have {{appointmentService.paginatedResult()?.pagination?.totalItems}} appointment(s)</p>
+@if (appointmentService.paginatedResult()?.items?.length 
+    && appointmentService.paginatedResult()!.items!.length > 0) {
+    <p>
+        Closest one:
+        @for (appointment of appointmentService.paginatedResult()?.items; track appointment.id) {
+            {{appointment.dateStart | date:'yyyy-M-dd'}} | {{appointment.dateStart | date:'H:mm'}} - {{appointment.dateEnd | date:'H:mm'}}   
+        }
+    </p>
+}

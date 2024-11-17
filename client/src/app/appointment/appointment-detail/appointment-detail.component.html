@@ -1,0 +1,8 @@
+<h5 class="mt-1">Appointment info</h5>
+<p>Appointment id: {{appointment()?.id}}</p>
+<p>Appointment date: {{appointment()?.dateStart | date:'yyyy-M-dd'}} | {{appointment()?.dateStart | date:'H:mm'}} - {{appointment()?.dateEnd | date:'H:mm'}}</p>
+<p>Appointment open status: {{appointment()?.isOpen}}</p>
+<p>Appointment ended status: {{appointment()?.hasEnded}}</p>
+<p>Office info: {{appointment()?.office?.city}}, {{appointment()?.office?.street}} {{appointment()?.office?.apartment}}</p>
+<p>Doctor info: {{appointment()?.office?.doctor?.firstName}} {{appointment()?.office?.doctor?.lastName}}</p>
+<p>Patient info: {{appointment()?.patient?.firstName}} {{appointment()?.patient?.lastName}}</p>

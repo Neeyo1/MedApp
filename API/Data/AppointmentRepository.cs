@@ -26,6 +26,14 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
             .FindAsync(appointmentId);
     }
 
+    public async Task<Appointment?> GetAppointmentDetailedByIdAsync(int appointmentId)
+    {
+        return await context.Appointments
+            .Include(x => x.Office)
+            .ThenInclude(x => x.Doctor)
+            .FirstOrDefaultAsync(x => x.Id == appointmentId);
+    }
+
     public async Task<PagedList<AppointmentDto>> GetAppointmentsAsync(AppointmentParams appointmentParams)
     {
         var query = context.Appointments.AsQueryable();

@@ -9,10 +9,13 @@
         <tbody>
             @for (appointment of appointmentService.paginatedResult()?.items; track appointment.id) {
                 <tr>
-                    <td>{{appointment.dateStart | date:'yyyy-M-dd hh:mm'}} - {{appointment.dateEnd | date:'hh:mm'}}</td>
+                    <td>{{appointment.dateStart | date:'yyyy-M-dd'}} | {{appointment.dateStart | date:'H:mm'}} - {{appointment.dateEnd | date:'H:mm'}}</td>
                     <td>
                         <button class="btn btn-primary" (click)="cancelAppointment(appointment.id)">
                             Cancel
+                        </button>
+                        <button class="btn btn-primary" (click)="openDetails(appointment.id)">
+                            Details
                         </button>
                   </td>
                 </tr>

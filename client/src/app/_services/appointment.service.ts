@@ -5,6 +5,7 @@ import { PaginatedResult } from '../_models/pagination';
 import { Appointment } from '../_models/appointment';
 import { AppointmentParams } from '../_models/appointmentParams';
 import { of, tap } from 'rxjs';
+import { AppointmentDetailed } from '../_models/appointmentDetailed';
 
 @Injectable({
   providedIn: 'root'
@@ -65,14 +66,30 @@ export class AppointmentService {
     });
   }
 
-  getAppointment(id: number){
-    const appointment: Appointment = [...this.appointmentCache.values()]
-      .reduce((arr, elem) => arr.concat(elem.body), [])
-      .find((g: Appointment) => g.id == id);
+  getMyAllAppointmentsAsPatient(){
+    const response = this.appointmentCache.get('myAllAsPatient');
 
-    if (appointment) return of(appointment);
-    
-    return this.http.get<Appointment>(this.baseUrl + `appointments/${id}`);
+    if (response) return this.setPaginatedResponse(response);
+    let params = this.setPaginationHeaders(1, 1)
+
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/my", {observe: 'response', params}).subscribe({
+      next: response => {
+        this.setPaginatedResponse(response);
+        this.appointmentCache.set('myAllAsPatient', response);
+      }
+    });
+  }
+
+  getAppointmentDetailed(id: number){
+    const response = this.appointmentCache.get('detailed-' + id);
+
+    if (response) return of(response);
+
+    return this.http.get<AppointmentDetailed>(this.baseUrl + `appointments/${id}`).pipe(
+      tap(response => {
+        this.appointmentCache.set('detailed-' + id, response);
+      })
+    );
   }
 
   createAppointment(model: any){

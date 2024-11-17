@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AppointmentService } from '../../_services/appointment.service';
 import { FormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 export class AppointmentListComponent implements OnInit, OnDestroy{
   appointmentService = inject(AppointmentService);
   private toastrService = inject(ToastrService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.loadAppointments();
@@ -34,6 +35,10 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
       next: _ => this.loadAppointments(),
       error: error => this.toastrService.error(error.error)
     });
+  }
+
+  openDetails(appointmentId: number){
+    this.router.navigateByUrl("/appointments/" + appointmentId);
   }
 
   pageChanged(event: any){

@@ -24,6 +24,7 @@ public class AutoMapperProfiles : Profile
             );
         CreateMap<OfficeCreateDto, Office>();
         CreateMap<Appointment, AppointmentDto>();
+        CreateMap<Appointment, AppointmentDetailedDto>();
         CreateMap<Result, ResultDto>();
         CreateMap<ResultCreateDto, Result>();
         CreateMap<Verification, VerificationDto>()

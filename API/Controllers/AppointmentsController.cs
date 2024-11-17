@@ -48,10 +48,13 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+        var appointment = await appointmentRepository.GetAppointmentDetailedByIdAsync(appointmentId);
         if (appointment == null) return BadRequest("Appointment does not exist");
 
-        var result = mapper.Map<AppointmentDto>(appointment);
+        if (appointment.Office.DoctorId != user.Id && (appointment.PatientId != user.Id))
+            return Unauthorized();
+
+        var result = mapper.Map<AppointmentDetailedDto>(appointment);
 
         return Ok(result);
     }
