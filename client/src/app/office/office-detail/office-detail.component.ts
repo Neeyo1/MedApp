@@ -58,13 +58,6 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
     });
   }
 
-  cancelAppointment(appointmentId: number){
-    this.appointmentService.cancelAppointment(appointmentId).subscribe({
-      next: _ => this.loadAppointments(),
-      error: error => this.toastrServie.error(error.error)
-    });
-  }
-
   editAppointment(appointmentId: number){
     console.log("Edit modal");
   }

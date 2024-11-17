@@ -1,1 +1,66 @@
-<p>register works!</p>
+<div class="d-flex align-items-center justify-content-center mt-5 mb-5">
+    <div class="col-4">
+        <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+            <h2 class="text-center text-primary">Register</h2>
+            <hr>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['username'])"
+                [label]="'Username'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['password'])"
+                [label]="'Password'"
+                [type]="'password'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['confirmPassword'])"
+                [label]="'Confirm password'"
+                [type]="'password'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['firstName'])"
+                [label]="'First name'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['lastName'])"
+                [label]="'Last name'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['birthYear'])"
+                [label]="'Birth year'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['birthMonth'])"
+                [label]="'Birth month'"
+            ></app-text-input>
+
+            <app-text-input
+                [formControl]="$any(registerForm.controls['birthDay'])"
+                [label]="'Birth day'"
+            ></app-text-input>
+
+            @if (validationErrors) {
+                <div class="alert alert-danger text-start">
+                    <ul>
+                        @for (error of validationErrors; track $index) {
+                            <li>{{error}}</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="form-group text-center">
+                <button class="btn btn-primary me-2" 
+                        type="submit"
+                        [disabled]="!registerForm.valid">Register</button>
+            </div>
+        </form>
+    </div>
+</div>

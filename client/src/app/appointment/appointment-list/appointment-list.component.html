@@ -2,7 +2,6 @@
     <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">Id</th>
             <th scope="col">Date</th>
             <th scope="col">Action</th>
           </tr>
@@ -10,7 +9,6 @@
         <tbody>
             @for (appointment of appointmentService.paginatedResult()?.items; track appointment.id) {
                 <tr>
-                    <td>{{appointment.id}}</td>
                     <td>{{appointment.dateStart | date:'yyyy-M-dd hh:mm'}} - {{appointment.dateEnd | date:'hh:mm'}}</td>
                     <td>
                         <button class="btn btn-primary" (click)="cancelAppointment(appointment.id)">
