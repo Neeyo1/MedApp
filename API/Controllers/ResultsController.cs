@@ -17,38 +17,42 @@ public class ResultsController(IResultRepository resultRepository, IUserReposito
 {
     [Authorize(Policy = "RequireDoctorRole")]
     [HttpGet("doctor")]
-    public async Task<ActionResult<PagedList<ResultDto>>> GetAllResultsAsDoctor([FromQuery] ResultParams resultParams)
+    public async Task<ActionResult<PagedList<ResultDto>>> GetResultsAsDoctor([FromQuery] ResultParams resultParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var results = await resultRepository.GetAllResultsAsDoctorAsync(user.Id, resultParams);
+        resultParams.DoctorId = 0;
+
+        var results = await resultRepository.GetResultsAsDoctorAsync(resultParams);
         Response.AddPaginationHeader(results);
         return Ok(results);
     }
 
     [Authorize(Policy = "RequireDoctorRole")]
-    [HttpGet("doctor/{patientId}")]
-    public async Task<ActionResult<PagedList<ResultDto>>> GetResultsForPatientAsDoctor(int patientId,
-        [FromQuery] ResultParams resultParams)
+    [HttpGet("doctor/my")]
+    public async Task<ActionResult<PagedList<ResultDto>>> GetMyResultsAsDoctor([FromQuery] ResultParams resultParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var results = await resultRepository.GetResultsForPatientAsDoctorAsync(user.Id, patientId,
-            resultParams);
+        resultParams.DoctorId = user.Id;
+
+        var results = await resultRepository.GetResultsAsDoctorAsync(resultParams);
         Response.AddPaginationHeader(results);
         return Ok(results);
     }
 
     [Authorize(Policy = "RequirePatientRole")]
     [HttpGet("patient")]
-    public async Task<ActionResult<PagedList<ResultDto>>> GetAllResultsAsPatient([FromQuery] ResultParams resultParams)
+    public async Task<ActionResult<PagedList<ResultDto>>> GetResultsAsPatient([FromQuery] ResultParams resultParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var results = await resultRepository.GetAllResultsAsPatientAsync(user.Id, resultParams);
+        resultParams.PatientId = user.Id;
+
+        var results = await resultRepository.GetResultsAsPatientAsync(resultParams);
         Response.AddPaginationHeader(results);
         return Ok(results);
     }

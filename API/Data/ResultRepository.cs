@@ -26,11 +26,19 @@ public class ResultRepository(DataContext context, IMapper mapper) : IResultRepo
             .FindAsync(resultId);
     }
 
-    public async Task<PagedList<ResultDto>> GetAllResultsAsDoctorAsync(int doctorId, 
-        ResultParams resultParams)
+    public async Task<PagedList<ResultDto>> GetResultsAsDoctorAsync(ResultParams resultParams)
     {
         var query = context.Results.AsQueryable();
-        query = query.Where(x => x.Office != null && x.Office.DoctorId == doctorId);
+
+        if (resultParams.DoctorId != 0)
+        {
+            query = query.Where(x => x.Office != null && x.Office.DoctorId == resultParams.DoctorId);
+        }
+
+        if (resultParams.PatientId != 0)
+        {
+            query = query.Where(x => x.PatientId == resultParams.PatientId);
+        }
 
         query = resultParams.OrderBy switch
         {
@@ -42,27 +50,11 @@ public class ResultRepository(DataContext context, IMapper mapper) : IResultRepo
             query.ProjectTo<ResultDto>(mapper.ConfigurationProvider), 
             resultParams.PageNumber, resultParams.PageSize);
     }
-    public async Task<PagedList<ResultDto>> GetResultsForPatientAsDoctorAsync(int doctorId, int patientId,
-        ResultParams resultParams)
+    
+    public async Task<PagedList<ResultDto>> GetResultsAsPatientAsync(ResultParams resultParams)
     {
         var query = context.Results.AsQueryable();
-        query = query.Where(x => x.Office != null && x.Office.DoctorId == doctorId && x.PatientId == patientId);
-
-        query = resultParams.OrderBy switch
-        {
-            "newest" => query.OrderByDescending(x => x.CreatedAt),
-            _ => query.OrderBy(x => x.CreatedAt)
-        };
-
-        return await PagedList<ResultDto>.CreateAsync(
-            query.ProjectTo<ResultDto>(mapper.ConfigurationProvider), 
-            resultParams.PageNumber, resultParams.PageSize);
-    }
-    public async Task<PagedList<ResultDto>> GetAllResultsAsPatientAsync(int patientId, 
-        ResultParams resultParams)
-    {
-        var query = context.Results.AsQueryable();
-        query = query.Where(x => x.PatientId == patientId);
+        query = query.Where(x => x.PatientId == resultParams.PatientId);
 
         query = resultParams.OrderBy switch
         {

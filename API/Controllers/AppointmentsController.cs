@@ -116,6 +116,8 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         var office = await officeRepository.GetOfficeByIdAsync(appointment.OfficeId);
         if (office == null) return BadRequest("Office does not exist");
         if (office.DoctorId != user.Id) return Unauthorized();
+
+        if (appointment.HasEnded == true) return BadRequest("You cannot delete ended appointments");
         
         appointmentRepository.DeleteAppointment(appointment);
 
@@ -133,6 +135,7 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
         if (appointment == null) return BadRequest("Could not find appointment");
         if (appointment.IsOpen == false) return BadRequest("Appointment is not open for registration");
+        if (appointment.DateStart <= DateTime.UtcNow) return BadRequest("Its too late to register to this appointment");
         
         appointment.Patient = user;
         appointment.IsOpen = false;
@@ -150,9 +153,11 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
 
         var appointment = await appointmentRepository.GetAppointmentByIdAsync(appointmentId);
         if (appointment == null) return BadRequest("Could not find appointment");
+        if (appointment.Patient != user) return Unauthorized();
         if (appointment.IsOpen == true) return BadRequest("Appointment is not closed");
         if (appointment.HasEnded == true) return BadRequest("Appointment is set as completed");
-        if (appointment.Patient != user) return Unauthorized();
+        if (appointment.DateStart <= DateTime.UtcNow)
+            return BadRequest("Its too late to cancel registration to this appointment");
         
         appointment.Patient = null!;
         appointment.IsOpen = true;
@@ -176,6 +181,8 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         var office = await officeRepository.GetOfficeByIdAsync(appointment.OfficeId);
         if (office == null) return BadRequest("Office does not exist");
         if (office.DoctorId != user.Id) return Unauthorized();
+        if (appointment.DateStart > DateTime.UtcNow)
+            return BadRequest("You cannot set appointed as completed that did not start yet");
         
         appointment.HasEnded = true;
 
