@@ -51,7 +51,6 @@ export class OfficeService {
     return this.http.post<Office>(this.baseUrl + "offices", model).pipe(
       tap(() => {
         this.officeCache.clear();
-        this.getOffices();
       })
     );
   }
@@ -60,7 +59,6 @@ export class OfficeService {
     return this.http.put<Office>(this.baseUrl + `offices/${officeId}`, model).pipe(
       tap(() => {
         this.officeCache.clear();
-        this.getOffices();
       })
     );
   }
@@ -69,7 +67,6 @@ export class OfficeService {
     return this.http.delete(this.baseUrl + `offices/${officeId}`).pipe(
       tap(() => {
         this.officeCache.clear();
-        this.getOffices();
       })
     );
   }
