@@ -7,6 +7,8 @@ import { OfficeDetailComponent } from './office/office-detail/office-detail.comp
 import { AppointmentListComponent } from './appointment/appointment-list/appointment-list.component';
 import { RegisterComponent } from './register/register.component';
 import { AppointmentDetailComponent } from './appointment/appointment-detail/appointment-detail.component';
+import { ResultListComponent } from './result/result-list/result-list.component';
+import { ResultDetailComponent } from './result/result-detail/result-detail.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -18,7 +20,9 @@ export const routes: Routes = [
             {path: 'offices', component: OfficeListComponent},
             {path: 'offices/:id', component: OfficeDetailComponent},
             {path: 'appointments', component: AppointmentListComponent},
-            {path: 'appointments/:id', component: AppointmentDetailComponent}
+            {path: 'appointments/:id', component: AppointmentDetailComponent},
+            {path: 'results', component: ResultListComponent},
+            {path: 'results/:id', component: ResultDetailComponent},
         ]
     },
     {path: 'info', component: InfoComponent},
