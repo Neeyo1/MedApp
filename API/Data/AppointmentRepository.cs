@@ -31,6 +31,7 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
         return await context.Appointments
             .Include(x => x.Office)
             .ThenInclude(x => x.Doctor)
+            .Include(x => x.Patient)
             .FirstOrDefaultAsync(x => x.Id == appointmentId);
     }
 
@@ -48,6 +49,11 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
             query = query.Where(x => x.PatientId == appointmentParams.PatientId);
         }
 
+        if (appointmentParams.DoctorId != 0)
+        {
+            query = query.Where(x => x.Office.DoctorId == appointmentParams.DoctorId);
+        }
+
         if (appointmentParams.Year != 0)
         {
             query = query.Where(x => x.DateStart.Year == appointmentParams.Year);
@@ -62,6 +68,13 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
         {
             "open" => query.Where(x => x.IsOpen == true),
             "close" => query.Where(x => x.IsOpen == false),
+            _ => query
+        };
+
+        query = appointmentParams.OrderBy switch
+        {
+            "furthest" => query.OrderByDescending(x => x.DateStart),
+            "closest" => query.OrderBy(x => x.DateStart),
             _ => query
         };
 

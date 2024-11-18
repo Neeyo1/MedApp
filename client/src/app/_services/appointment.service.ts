@@ -58,7 +58,7 @@ export class AppointmentService {
     params = params.append("month", this.myAppointmentAsPatientParams().month);
     params = params.append("year", this.myAppointmentAsPatientParams().year);
 
-    return this.http.get<Appointment[]>(this.baseUrl + "appointments/my", {observe: 'response', params}).subscribe({
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/patient/my", {observe: 'response', params}).subscribe({
       next: response => {
         this.setPaginatedResponse(response);
         this.appointmentCache.set('myAsPatient-' + Object.values(this.myAppointmentAsPatientParams()).join("-"), response);
@@ -66,16 +66,53 @@ export class AppointmentService {
     });
   }
 
-  getMyAllAppointmentsAsPatient(){
-    const response = this.appointmentCache.get('myAllAsPatient');
+  getMyAppointmentsAsDoctor(){
+    const response = this.appointmentCache.get('myAsDoctor-' + Object.values(this.appointmentParams()).join('-'));
+
+    if (response) return this.setPaginatedResponse(response);
+    let params = this.setPaginationHeaders(this.appointmentParams().pageNumber, this.appointmentParams().pageSize)
+
+    if (this.appointmentParams().status) params = params.append("status", this.appointmentParams().status as string);
+    if (this.appointmentParams().orderBy) params = params.append("orderBy", this.appointmentParams().orderBy as string);
+    params = params.append("officeId", this.appointmentParams().officeId);
+    params = params.append("doctorId", this.appointmentParams().doctorId);
+    params = params.append("month", this.appointmentParams().month);
+    params = params.append("year", this.appointmentParams().year);
+
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/doctor/my", {observe: 'response', params}).subscribe({
+      next: response => {
+        this.setPaginatedResponse(response);
+        this.appointmentCache.set('myAsDoctor-' + Object.values(this.appointmentParams()).join("-"), response);
+      }
+    });
+  }
+
+  getMyClosestAppointmentsAsPatient(){
+    const response = this.appointmentCache.get('myClosestAsPatient');
 
     if (response) return this.setPaginatedResponse(response);
     let params = this.setPaginationHeaders(1, 1)
+    params = params.append("orderBy", "closest");
 
-    return this.http.get<Appointment[]>(this.baseUrl + "appointments/my", {observe: 'response', params}).subscribe({
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/patient/my", {observe: 'response', params}).subscribe({
       next: response => {
         this.setPaginatedResponse(response);
-        this.appointmentCache.set('myAllAsPatient', response);
+        this.appointmentCache.set('myClosestAsPatient', response);
+      }
+    });
+  }
+
+  getMyClosestAppointmentsAsDoctor(){
+    const response = this.appointmentCache.get('myClosestAsDoctor');
+
+    if (response) return this.setPaginatedResponse(response);
+    let params = this.setPaginationHeaders(1, 1)
+    params = params.append("orderBy", "closest");
+
+    return this.http.get<Appointment[]>(this.baseUrl + "appointments/doctor/my", {observe: 'response', params}).subscribe({
+      next: response => {
+        this.setPaginatedResponse(response);
+        this.appointmentCache.set('myClosestAsDoctor', response);
       }
     });
   }

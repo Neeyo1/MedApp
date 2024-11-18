@@ -28,7 +28,7 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
     }
 
     [Authorize(Policy = "RequirePatientRole")]
-    [HttpGet("my")]
+    [HttpGet("patient/my")]
     public async Task<ActionResult<PagedList<AppointmentDto>>> GetMyAppointmentsAsPatient(
         [FromQuery] AppointmentParams appointmentParams)
     {
@@ -36,6 +36,22 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         if (user == null) return BadRequest("Could not find user");
 
         appointmentParams.PatientId = user.Id;
+
+        var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
+        Response.AddPaginationHeader(appointments);
+        return Ok(appointments);
+    }
+
+    [Authorize(Policy = "RequireDoctorRole")]
+    [HttpGet("doctor/my")]
+    public async Task<ActionResult<PagedList<AppointmentDto>>> GetMyAppointmentsAsDoctor(
+        [FromQuery] AppointmentParams appointmentParams)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        appointmentParams.DoctorId = user.Id;
+        appointmentParams.Status = "close";
 
         var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
         Response.AddPaginationHeader(appointments);

@@ -4,6 +4,7 @@ public class AppointmentParams : PaginationParams
 {
     public int OfficeId { get; set; }
     public int PatientId { get; set; }
+    public int DoctorId { get; set; }
     public int Month { get; set; }
     public int Year { get; set; }
     public string Status { get; set; } = "all";

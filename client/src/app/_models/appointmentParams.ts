@@ -1,5 +1,6 @@
 export class AppointmentParams{
     officeId = 0;
+    doctorId = 0;
     month = 0;
     year = 0;
     status? = "all";
