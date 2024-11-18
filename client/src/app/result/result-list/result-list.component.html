@@ -1,0 +1,68 @@
+<div class="container mt-3">
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date</th>
+            @if (accountService.roles().includes("Patient")) {
+                <th scope="col">Office</th>
+            } @else if (accountService.roles().includes("Doctor")) {
+                <th scope="col">Patient</th>
+            }
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            @for (result of resultService.paginatedResult()?.items; track result.id) {
+                <tr>
+                    <td>{{result.name}}</td>
+                    <td>
+                        @if (result.description.length > 100) {
+                            {{result.description.slice(0,2)}}...
+                        } @else {
+                            {{result.description}}
+                        }
+                    </td>
+                    <td>{{result.createdAt | date:'yyyy-M-dd'}} | {{result.createdAt | date:'H:mm'}}</td>
+                    @if (accountService.roles().includes("Patient")) {
+                        <td>{{result.office.name}}</td>
+                    } @else if (accountService.roles().includes("Doctor")) {
+                        <td>{{result.patient.firstName}} {{result.patient.lastName}}</td>
+                    }
+                    <td>
+                        <button class="btn btn-primary" (click)="openDetails(result.id)">
+                            Details
+                        </button>
+                        @if (accountService.roles().includes("Doctor")
+                            && result.office.doctor.id == accountService.currentUser()?.id) {
+                            <button class="btn btn-primary" (click)="editResult(result.id)">
+                                Edit
+                            </button>
+                            <button class="btn btn-primary" (click)="deleteResult(result.id)">
+                                Delete
+                            </button>
+                        }
+                        
+                  </td>
+                </tr>
+            }
+        </tbody>
+      </table>
+    
+    @if (resultService.paginatedResult()?.pagination) {
+        <div class="d-flex justify-content-center">
+            <pagination [boundaryLinks]="true" 
+                        [totalItems]="resultService.paginatedResult()?.pagination!.totalItems"
+                        [itemsPerPage]="resultService.paginatedResult()?.pagination!.itemsPerPage"
+                        (pageChanged)="pageChanged($event)"
+                        [(ngModel)]="resultService.paginatedResult()?.pagination!.currentPage"
+                        [maxSize]="10"
+                        previousText="&lsaquo;" 
+                        nextText="&rsaquo;" 
+                        firstText="&laquo;" 
+                        lastText="&raquo;">
+            </pagination>   
+        </div>
+    }
+</div>
