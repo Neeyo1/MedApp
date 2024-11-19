@@ -1,0 +1,44 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Create result</h4>
+    <button type="button"
+            class="btn-close close pull-right"
+            (click)="bsModalRef.hide()">
+            <span class="visually-hidden">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="col-8">
+            <form [formGroup]="resultForm" (ngSubmit)="complete()" autocomplete="off">
+                <h2 class="text-center text-primary">Create result</h2>
+                <hr>
+    
+                <app-text-input
+                    [formControl]="$any(resultForm.controls['name'])"
+                    [label]="'Name'"
+                ></app-text-input>
+    
+                <app-text-input
+                    [formControl]="$any(resultForm.controls['description'])"
+                    [label]="'Description'"
+                ></app-text-input>
+    
+                @if (validationErrors) {
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            @for (error of validationErrors; track $index) {
+                                <li>{{error}}</li>
+                            }
+                        </ul>
+                    </div>
+                }
+    
+                <div class="form-group text-center">
+                    <button class="btn btn-primary me-2" 
+                            type="submit"
+                            [disabled]="!resultForm.valid">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
