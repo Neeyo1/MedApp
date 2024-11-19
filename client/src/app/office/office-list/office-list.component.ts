@@ -49,7 +49,16 @@ export class OfficeListComponent implements OnInit, OnDestroy{
       next: () => {
         if (this.bsModalRef.content && this.bsModalRef.content.completed){
           let officeForm = this.bsModalRef.content.officeForm;
-          officeForm.value['mondayHours'] = officeForm.value['mondayHours'].split(',').map(Number);
+          const days = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 
+            'saturdayHours', 'sundayHours']
+          days.forEach(day => {
+            if (officeForm.value[day] == ''){
+              officeForm.value[day] = [];
+            } else{
+              officeForm.value[day] = officeForm.value[day].split(',').map(Number);
+            }
+          });
+
           this.officeService.createOffice(officeForm.value).subscribe({
             next: _ => this.officeService.getOffices(),
             error: error => this.toastrService.error(error.error)

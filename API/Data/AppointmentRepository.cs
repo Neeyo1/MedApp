@@ -66,8 +66,9 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
 
         query = appointmentParams.Status switch
         {
-            "open" => query.Where(x => x.IsOpen == true),
-            "close" => query.Where(x => x.IsOpen == false),
+            "open" => query.Where(x => x.IsOpen == true && x.DateStart > DateTime.UtcNow),
+            "close" => query.Where(x => x.IsOpen == false && x.DateStart > DateTime.UtcNow),
+            "archive" => query.Where(x => x.DateStart < DateTime.UtcNow),
             _ => query
         };
 

@@ -6,3 +6,19 @@
 <p>Office info: {{appointment()?.office?.city}}, {{appointment()?.office?.street}} {{appointment()?.office?.apartment}}</p>
 <p>Doctor info: {{appointment()?.office?.doctor?.firstName}} {{appointment()?.office?.doctor?.lastName}}</p>
 <p>Patient info: {{appointment()?.patient?.firstName}} {{appointment()?.patient?.lastName}}</p>
+@if (accountService.currentUser()?.id == appointment()?.office?.doctor?.id
+&& appointment()?.id) {
+    @if (appointment()?.hasEnded) {
+        <button class="btn btn-primary" (click)="setAsUncompleted(appointment()!.id)">
+            Set as uncompleted
+        </button>
+
+        <button class="btn btn-primary" (click)="showResultModal()">
+            Add result
+        </button>
+    } @else {
+        <button class="btn btn-primary" (click)="setAsCompleted(appointment()!.id)">
+            Set as completed
+        </button>
+    }
+}

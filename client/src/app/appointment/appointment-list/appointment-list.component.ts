@@ -21,24 +21,34 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
   private router = inject(Router);
 
   ngOnInit(): void {
-    this.loadAppointments();
+    if (this.accountService.roles().includes("Patient")){
+      this.loadAppointmentsAsPatient();
+    } else if (this.accountService.roles().includes("Doctor")){
+      this.loadAppointmentsAsDoctor();
+    }
   }
 
   ngOnDestroy(): void {
     this.appointmentService.paginatedResult.set(null);
   }
 
-  loadAppointments(){
-    if (this.accountService.roles().includes("Patient")){
-      this.appointmentService.getMyAppointmentsAsPatient();
-    } else if (this.accountService.roles().includes("Doctor")){
-      this.appointmentService.getMyAppointmentsAsDoctor();
-    }
+  loadAppointmentsAsPatient(){
+    this.appointmentService.getMyAppointmentsAsPatient();
+  }
+
+  loadAppointmentsAsDoctor(){
+    this.appointmentService.getMyAppointmentsAsDoctor();
   }
 
   cancelAppointment(appointmentId: number){
     this.appointmentService.cancelAppointment(appointmentId).subscribe({
-      next: _ => this.loadAppointments(),
+      next: _ => {
+        if (this.accountService.roles().includes("Patient")){
+          this.loadAppointmentsAsPatient();
+        } else if (this.accountService.roles().includes("Doctor")){
+          this.loadAppointmentsAsDoctor();
+        }
+      },
       error: error => this.toastrService.error(error.error)
     });
   }
@@ -48,9 +58,16 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
   }
 
   pageChanged(event: any){
-    if (this.appointmentService.myAppointmentAsPatientParams().pageNumber != event.page){
-      this.appointmentService.myAppointmentAsPatientParams().pageNumber = event.page;
-      this.loadAppointments();
+    if (this.accountService.roles().includes("Patient")){
+      if (this.appointmentService.myAppointmentAsPatientParams().pageNumber != event.page){
+        this.appointmentService.myAppointmentAsPatientParams().pageNumber = event.page;
+        this.loadAppointmentsAsPatient();
+      }
+    } else if (this.accountService.roles().includes("Doctor")){
+      if (this.appointmentService.myAppointmentAsDoctorParams().pageNumber != event.page){
+        this.appointmentService.myAppointmentAsDoctorParams().pageNumber = event.page;
+        this.loadAppointmentsAsDoctor();
+      }
     }
   }
 }

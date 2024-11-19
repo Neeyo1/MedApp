@@ -51,7 +51,6 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
         if (user == null) return BadRequest("Could not find user");
 
         appointmentParams.DoctorId = user.Id;
-        appointmentParams.Status = "close";
 
         var appointments = await appointmentRepository.GetAppointmentsAsync(appointmentParams);
         Response.AddPaginationHeader(appointments);

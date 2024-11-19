@@ -32,11 +32,13 @@
                     [formControl]="$any(officeForm.controls['apartment'])"
                     [label]="'Apartment'"
                 ></app-text-input>
-
-                <app-text-input
-                    [formControl]="$any(officeForm.controls['mondayHours'])"
-                    [label]="'Monday hours'"
-                ></app-text-input>
+                
+                @for (day of days; track $index) {
+                    <app-text-input
+                        [formControl]="$any(officeForm.controls[day.value])"
+                        [label]="day.label"
+                    ></app-text-input>
+                }
     
                 @if (validationErrors) {
                     <div class="alert alert-danger text-start">

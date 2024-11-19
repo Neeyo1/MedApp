@@ -17,6 +17,7 @@ export class AppointmentService {
   paginatedResult = signal<PaginatedResult<Appointment[]> | null>(null);
   appointmentParams = signal<AppointmentParams>(new AppointmentParams);
   myAppointmentAsPatientParams = signal<AppointmentParams>(new AppointmentParams);
+  myAppointmentAsDoctorParams = signal<AppointmentParams>(new AppointmentParams);
 
   resetAppointmentParams(){
     this.appointmentParams.set(new AppointmentParams);
@@ -26,13 +27,17 @@ export class AppointmentService {
     this.myAppointmentAsPatientParams.set(new AppointmentParams);
   }
 
+  resetMyAppointmentAsDoctorParams(){
+    this.myAppointmentAsDoctorParams.set(new AppointmentParams);
+  }
+
   getAppointments(){
     const response = this.appointmentCache.get(Object.values(this.appointmentParams()).join('-'));
 
     if (response) return this.setPaginatedResponse(response);
     let params = this.setPaginationHeaders(this.appointmentParams().pageNumber, this.appointmentParams().pageSize)
 
-    if (this.appointmentParams().status) params = params.append("status", this.appointmentParams().status as string);
+    params = params.append("status", "open");
     if (this.appointmentParams().orderBy) params = params.append("orderBy", this.appointmentParams().orderBy as string);
     params = params.append("officeId", this.appointmentParams().officeId);
     params = params.append("month", this.appointmentParams().month);
@@ -67,22 +72,22 @@ export class AppointmentService {
   }
 
   getMyAppointmentsAsDoctor(){
-    const response = this.appointmentCache.get('myAsDoctor-' + Object.values(this.appointmentParams()).join('-'));
+    const response = this.appointmentCache.get('myAsDoctor-' + Object.values(this.myAppointmentAsDoctorParams()).join('-'));
 
     if (response) return this.setPaginatedResponse(response);
-    let params = this.setPaginationHeaders(this.appointmentParams().pageNumber, this.appointmentParams().pageSize)
+    let params = this.setPaginationHeaders(this.myAppointmentAsDoctorParams().pageNumber, this.myAppointmentAsDoctorParams().pageSize)
 
-    if (this.appointmentParams().status) params = params.append("status", this.appointmentParams().status as string);
-    if (this.appointmentParams().orderBy) params = params.append("orderBy", this.appointmentParams().orderBy as string);
-    params = params.append("officeId", this.appointmentParams().officeId);
-    params = params.append("doctorId", this.appointmentParams().doctorId);
-    params = params.append("month", this.appointmentParams().month);
-    params = params.append("year", this.appointmentParams().year);
+    if (this.myAppointmentAsDoctorParams().status) params = params.append("status", this.myAppointmentAsDoctorParams().status as string);
+    if (this.myAppointmentAsDoctorParams().orderBy) params = params.append("orderBy", this.myAppointmentAsDoctorParams().orderBy as string);
+    params = params.append("officeId", this.myAppointmentAsDoctorParams().officeId);
+    params = params.append("doctorId", this.myAppointmentAsDoctorParams().doctorId);
+    params = params.append("month", this.myAppointmentAsDoctorParams().month);
+    params = params.append("year", this.myAppointmentAsDoctorParams().year);
 
     return this.http.get<Appointment[]>(this.baseUrl + "appointments/doctor/my", {observe: 'response', params}).subscribe({
       next: response => {
         this.setPaginatedResponse(response);
-        this.appointmentCache.set('myAsDoctor-' + Object.values(this.appointmentParams()).join("-"), response);
+        this.appointmentCache.set('myAsDoctor-' + Object.values(this.myAppointmentAsDoctorParams()).join("-"), response);
       }
     });
   }
@@ -163,6 +168,22 @@ export class AppointmentService {
 
   cancelAppointment(appointmentId: number){
     return this.http.post(this.baseUrl + `appointments/${appointmentId}/cancel`, {}).pipe(
+      tap(() => {
+        this.appointmentCache.clear();
+      })
+    );
+  }
+
+  setAppointmentAsCompleted(appointmentId: number){
+    return this.http.post(this.baseUrl + `appointments/${appointmentId}/complete`, {}).pipe(
+      tap(() => {
+        this.appointmentCache.clear();
+      })
+    );
+  }
+
+  setAppointmentAsUncompleted(appointmentId: number){
+    return this.http.post(this.baseUrl + `appointments/${appointmentId}/uncomplete`, {}).pipe(
       tap(() => {
         this.appointmentCache.clear();
       })

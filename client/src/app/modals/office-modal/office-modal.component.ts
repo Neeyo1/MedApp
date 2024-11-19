@@ -16,6 +16,15 @@ export class OfficeModalComponent implements OnInit{
   private fb = inject(FormBuilder);
   officeForm: FormGroup = new FormGroup({});
   validationErrors: string[] | undefined;
+  days = [
+    {value: 'mondayHours', label: 'Monday hours'},
+    {value: 'tuesdayHours', label: 'Tuesday hours'},
+    {value: 'wednesdayHours', label: 'Wednesday hours'},
+    {value: 'thursdayHours', label: 'Thursday hours'},
+    {value: 'fridayHours', label: 'Friday hours'},
+    {value: 'saturdayHours', label: 'Saturday hours'},
+    {value: 'sundayHours', label: 'Sunday hours'}
+  ]
 
   ngOnInit(): void {
     this.initializeForm();
@@ -27,7 +36,13 @@ export class OfficeModalComponent implements OnInit{
       city: ['', [Validators.required]],
       street: ['', [Validators.required]],
       apartment: ['', [Validators.required]],
-      mondayHours: ['']
+      mondayHours: [''],
+      tuesdayHours: [''],
+      wednesdayHours: [''],
+      thursdayHours: [''],
+      fridayHours: [''],
+      saturdayHours: [''],
+      sundayHours: ['']
     })
   }
 

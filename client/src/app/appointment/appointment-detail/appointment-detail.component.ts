@@ -4,6 +4,7 @@ import { AppointmentService } from '../../_services/appointment.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { DatePipe } from '@angular/common';
+import { AccountService } from '../../_services/account.service';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -17,6 +18,7 @@ export class AppointmentDetailComponent implements OnInit{
   private route = inject(ActivatedRoute);
   private toastrServie = inject(ToastrService);
   private router = inject(Router);
+  accountService = inject(AccountService);
   appointment = signal<AppointmentDetailed | null>(null);
 
   ngOnInit(): void {
@@ -34,5 +36,23 @@ export class AppointmentDetailComponent implements OnInit{
         this.router.navigateByUrl("/");
       }
     })
+  }
+
+  setAsCompleted(appointmentId: number){
+    this.appointmentService.setAppointmentAsCompleted(appointmentId).subscribe({
+      next: _ => this.loadAppointment(),
+      error: error => this.toastrServie.error(error.error)
+    })
+  }
+
+  setAsUncompleted(appointmentId: number){
+    this.appointmentService.setAppointmentAsUncompleted(appointmentId).subscribe({
+      next: _ => this.loadAppointment(),
+      error: error => this.toastrServie.error(error.error)
+    })
+  }
+
+  showResultModal(){
+    this.toastrServie.info("Show result create modal")
   }
 }

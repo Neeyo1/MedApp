@@ -7,12 +7,12 @@ export interface Office{
     street: string;
     apartment: string;
     mondayHours: number[];
-    TuesdayHours: number[];
-    WednesdayHours: number[];
-    ThursdayHours: number[];
-    FridayHours: number[];
-    SaturdayHours: number[];
-    SundayHours: number[];
+    tuesdayHours: number[];
+    wednesdayHours: number[];
+    thursdayHours: number[];
+    fridayHours: number[];
+    saturdayHours: number[];
+    sundayHours: number[];
     createdAt: Date;
     doctor: Member;
 }
