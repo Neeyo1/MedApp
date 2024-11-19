@@ -37,7 +37,7 @@ export class AppointmentService {
     if (response) return this.setPaginatedResponse(response);
     let params = this.setPaginationHeaders(this.appointmentParams().pageNumber, this.appointmentParams().pageSize)
 
-    params = params.append("status", "open");
+    params = params.append("status", "current-open");
     if (this.appointmentParams().orderBy) params = params.append("orderBy", this.appointmentParams().orderBy as string);
     params = params.append("officeId", this.appointmentParams().officeId);
     params = params.append("month", this.appointmentParams().month);
@@ -112,6 +112,7 @@ export class AppointmentService {
 
     if (response) return this.setPaginatedResponse(response);
     let params = this.setPaginationHeaders(1, 1)
+    params = params.append("status", "current-close");
     params = params.append("orderBy", "closest");
 
     return this.http.get<Appointment[]>(this.baseUrl + "appointments/doctor/my", {observe: 'response', params}).subscribe({

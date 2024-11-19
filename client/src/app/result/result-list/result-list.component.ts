@@ -22,9 +22,9 @@ export class ResultListComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     if (this.accountService.roles().includes("Patient")){
-      this.loadResultsAsPatient();
+      this.loadMyResultsAsPatient();
     } else if (this.accountService.roles().includes("Doctor")){
-      this.loadResultsAsDoctor();
+      this.loadMyResultsAsDoctor();
     }
   }
 
@@ -32,12 +32,12 @@ export class ResultListComponent implements OnInit, OnDestroy{
     this.resultService.paginatedResult.set(null);
   }
 
-  loadResultsAsPatient(){
-    this.resultService.getResultsAsPatient();
+  loadMyResultsAsPatient(){
+    this.resultService.getMyResultsAsPatient();
   }
 
-  loadResultsAsDoctor(){
-    this.resultService.getResultsAsDoctor();
+  loadMyResultsAsDoctor(){
+    this.resultService.getMyResultsAsDoctor();
   }
 
   openDetails(resultId: number){
@@ -56,9 +56,9 @@ export class ResultListComponent implements OnInit, OnDestroy{
     if (this.resultService.resultParams().pageNumber != event.page){
       this.resultService.resultParams().pageNumber = event.page;
       if (this.accountService.roles().includes("Patient")){
-        this.loadResultsAsPatient();
+        this.loadMyResultsAsPatient();
       } else if (this.accountService.roles().includes("Doctor")){
-        this.loadResultsAsDoctor();
+        this.loadMyResultsAsDoctor();
       }
     }
   }

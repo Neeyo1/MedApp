@@ -25,7 +25,7 @@ export class ResultService {
     this.myResultAsDoctorParams.set(new ResultParams);
   }
 
-  getResultsAsPatient(){
+  getMyResultsAsPatient(){
     const response = this.resultCache.get('AsPatient-' + Object.values(this.resultParams()).join('-'));
 
     if (response) return this.setPaginatedResponse(response);

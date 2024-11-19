@@ -19,6 +19,15 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private router = inject(Router);
+  statusList = [
+    {value: 'current-open', display: 'Current open'},
+    {value: 'current-close', display: 'Current close'},
+    {value: 'current-all', display: 'Current all'},
+    {value: 'archive-open', display: 'Archive open'},
+    {value: 'archive-close', display: 'Archive close'},
+    {value: 'archive-all', display: 'Archive all'},
+    {value: 'all', display: 'All'},
+  ];
 
   ngOnInit(): void {
     if (this.accountService.roles().includes("Patient")){
@@ -68,6 +77,16 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
         this.appointmentService.myAppointmentAsDoctorParams().pageNumber = event.page;
         this.loadAppointmentsAsDoctor();
       }
+    }
+  }
+
+  resetFilters(){
+    if (this.accountService.roles().includes("Patient")){
+      this.appointmentService.resetMyAppointmentAsPatientParams();
+      this.loadAppointmentsAsPatient();
+    } else if (this.accountService.roles().includes("Doctor")){
+      this.appointmentService.resetMyAppointmentAsDoctorParams();
+      this.loadAppointmentsAsDoctor();
     }
   }
 }

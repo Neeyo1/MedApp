@@ -1,4 +1,49 @@
 <div class="container mt-3">
+    @if (accountService.roles().includes("Patient")) {
+        <form #form="ngForm" (ngSubmit)="loadAppointmentsAsPatient()" class="d-flex flex-wrap mb-3">
+            <div class="d-flex">
+                <label class="col-form-label">Filter:</label>
+                <select name="status"
+                    class="form-select ms-1" 
+                    [(ngModel)]="appointmentService.myAppointmentAsPatientParams().status"
+                >
+                @for (status of statusList; track status.value) {
+                    <option [value]="status.value">{{status.display}}</option>
+                }
+                </select>
+            </div>
+    
+            <div class="d-flex">
+              <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+    
+            <div class="d-flex">
+              <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset</button>
+            </div>
+      </form>
+    } @else if (this.accountService.roles().includes("Doctor")) {
+        <form #form="ngForm" (ngSubmit)="loadAppointmentsAsDoctor()" class="d-flex flex-wrap mb-3">
+            <div class="d-flex">
+                <label class="col-form-label">Filter:</label>
+                <select name="status"
+                    class="form-select ms-1" 
+                    [(ngModel)]="appointmentService.myAppointmentAsDoctorParams().status"
+                >
+                @for (status of statusList; track status.value) {
+                    <option [value]="status.value">{{status.display}}</option>
+                }
+                </select>
+            </div>
+    
+            <div class="d-flex">
+              <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+    
+            <div class="d-flex">
+              <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset</button>
+            </div>
+      </form>
+    }
     <table class="table table-hover">
         <thead>
           <tr>
