@@ -138,6 +138,22 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         return BadRequest("Could not delete photo");
     }
 
+    [HttpPost("change-password")]
+    public async Task<ActionResult<UserDto>> ChangePassword(UserEditPasswordDto userEditPasswordDto)
+    {
+        var user = await userManager.FindByNameAsync(User.GetUsername());
+        if (user == null) return BadRequest("Could not find user");
+
+        var result = await userManager.ChangePasswordAsync(user, userEditPasswordDto.CurrentPassword, 
+            userEditPasswordDto.NewPassword);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        
+        var userToReturn = mapper.Map<UserDto>(user);
+        userToReturn.Token = await tokenService.CreateToken(user);
+
+        return userToReturn;
+    }
+
     private async Task<bool> UserExists(string username)
     {
         return await userManager.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());

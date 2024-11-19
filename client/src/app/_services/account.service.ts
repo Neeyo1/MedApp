@@ -47,6 +47,17 @@ export class AccountService {
     this.currentUser.set(null);
   }
 
+  changePassword(model: any){
+    return this.http.post<User>(this.baseUrl + "account/change-password", model).pipe(
+      map(user => {
+        if (user){
+          this.setCurrentUser(user);
+        }
+        return user;
+      })
+    )
+  }
+
   setCurrentUser(user: User){
     localStorage.setItem("user", JSON.stringify(user));
     this.currentUser.set(user);

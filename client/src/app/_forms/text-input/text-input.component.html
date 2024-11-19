@@ -6,28 +6,49 @@
         [formControl]="control"
         placeholder={{label()}}>
     <label>{{label()}}</label>
-    <div *ngIf="control.hasError('required')" 
-        class="invalid-feedback text start">
-        Please enter a {{label()}}
-    </div>
-    <div *ngIf="control.hasError('minlength')" 
-        class="invalid-feedback text start">
-        {{label()}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
-    </div>
-    <div *ngIf="control.hasError('maxlength')" 
-        class="invalid-feedback text start">
-        {{label()}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
-    </div>
-    <div *ngIf="control.hasError('isMatching')" 
-        class="invalid-feedback text start">
-        Passwords do not match
-    </div>
-    <div *ngIf="control.hasError('hasOnlyLettersAndSpaces')" 
-        class="invalid-feedback text start">
-        {{label()}} must contain only letters
-    </div>
-    <div *ngIf="control.hasError('hasOnlyNumbers')" 
-        class="invalid-feedback text start">
-        {{label()}} must contain only numbers
-    </div>
+    @if (control.hasError('required')) {
+        <div class="invalid-feedback text start">
+            Please enter a {{label()}}
+        </div>
+    }
+    @if (control.hasError('minlength')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
+        </div>
+    }
+    @if (control.hasError('maxlength')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
+        </div>
+    }
+    @if (control.hasError('isMatching')) {
+        <div class="invalid-feedback text start">
+            Passwords do not match
+        </div>
+    }
+    @if (control.hasError('hasNumber')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must contain at least one number
+        </div>
+    }
+    @if (control.hasError('hasLowerCase')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must contain at least one lower case letter
+        </div>
+    }
+    @if (control.hasError('hasUpperCase')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must contain at least one upper case letter
+        </div>
+    }
+    @if (control.hasError('hasOnlyLettersAndSpaces')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must contain only letters
+        </div>
+    }
+    @if (control.hasError('hasOnlyNumbers')) {
+        <div class="invalid-feedback text start">
+            {{label()}} must contain only numbers
+        </div>
+    }
 </div>
