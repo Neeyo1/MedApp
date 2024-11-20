@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { TextInputComponent } from '../../_forms/text-input/text-input.component';
+import { Office } from '../../_models/office';
 
 @Component({
   selector: 'app-office-modal',
@@ -13,6 +14,7 @@ import { TextInputComponent } from '../../_forms/text-input/text-input.component
 export class OfficeModalComponent implements OnInit{
   bsModalRef = inject(BsModalRef);
   completed = false;
+  office?: Office;
   private fb = inject(FormBuilder);
   officeForm: FormGroup = new FormGroup({});
   validationErrors: string[] | undefined;
@@ -32,17 +34,17 @@ export class OfficeModalComponent implements OnInit{
 
   initializeForm(){
     this.officeForm = this.fb.group({
-      name: ['', [Validators.required]],
-      city: ['', [Validators.required]],
-      street: ['', [Validators.required]],
-      apartment: ['', [Validators.required]],
-      mondayHours: [''],
-      tuesdayHours: [''],
-      wednesdayHours: [''],
-      thursdayHours: [''],
-      fridayHours: [''],
-      saturdayHours: [''],
-      sundayHours: ['']
+      name: [this.office?.name == null ? '' : this.office.name, [Validators.required]],
+      city: [this.office?.city == null ? '' : this.office.city, [Validators.required]],
+      street: [this.office?.street == null ? '' : this.office.street, [Validators.required]],
+      apartment: [this.office?.apartment == null ? '' : this.office.apartment, [Validators.required]],
+      mondayHours: [this.office?.mondayHours == null ? '' : this.office.mondayHours.join(',')],
+      tuesdayHours: [this.office?.tuesdayHours == null ? '' : this.office.tuesdayHours.join(',')],
+      wednesdayHours: [this.office?.wednesdayHours == null ? '' : this.office.wednesdayHours.join(',')],
+      thursdayHours: [this.office?.thursdayHours == null ? '' : this.office.thursdayHours.join(',')],
+      fridayHours: [this.office?.fridayHours == null ? '' : this.office.fridayHours.join(',')],
+      saturdayHours: [this.office?.saturdayHours == null ? '' : this.office.saturdayHours.join(',')],
+      sundayHours: [this.office?.sundayHours == null ? '' : this.office.sundayHours.join(',')]
     })
   }
 

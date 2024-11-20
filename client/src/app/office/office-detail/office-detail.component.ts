@@ -9,6 +9,8 @@ import { AppointmentService } from '../../_services/appointment.service';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { OfficeModalComponent } from '../../modals/office-modal/office-modal.component';
 
 @Component({
   selector: 'app-office-detail',
@@ -21,10 +23,12 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   private officeService = inject(OfficeService);
   appointmentService = inject(AppointmentService);
   private route = inject(ActivatedRoute);
-  private toastrServie = inject(ToastrService);
+  private toastrService = inject(ToastrService);
   private router = inject(Router);
   office = signal<Office | null>(null);
   accountService = inject(AccountService);
+  private modalService = inject(BsModalService);
+  bsModalRef: BsModalRef<OfficeModalComponent> = new BsModalRef<OfficeModalComponent>();
 
   ngOnInit(): void {
     this.loadOffice();
@@ -54,7 +58,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   bookAppointment(appointmentId: number){
     this.appointmentService.bookAppointment(appointmentId).subscribe({
       next: _ => this.loadAppointments(),
-      error: error => this.toastrServie.error(error.error)
+      error: error => this.toastrService.error(error.error)
     });
   }
 
@@ -65,8 +69,44 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   deleteAppointment(appointmentId: number){
     this.appointmentService.deleteAppointment(appointmentId).subscribe({
       next: _ => this.loadAppointments(),
-      error: error => this.toastrServie.error(error.error)
+      error: error => this.toastrService.error(error.error)
     });
+  }
+
+  openEditOfficeModal(office: Office | null){
+    if (office == null) return;
+    const initialState: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false,
+        office: office
+      }
+    };
+    this.bsModalRef = this.modalService.show(OfficeModalComponent, initialState);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef.content && this.bsModalRef.content.completed){
+          let officeForm = this.bsModalRef.content.officeForm;
+          const days = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 
+            'saturdayHours', 'sundayHours']
+          days.forEach(day => {
+            if (officeForm.value[day] == ''){
+              officeForm.value[day] = [];
+            } else{
+              officeForm.value[day] = officeForm.value[day].split(',').map(Number);
+            }
+          });
+
+          this.officeService.editOffice(office.id, officeForm.value).subscribe({
+            next: _ => {
+              this.officeService.getOffices();
+              this.loadOffice();
+            },
+            error: error => this.toastrService.error(error.error)
+          })
+        }
+      }
+    })
   }
 
   pageChanged(event: any){

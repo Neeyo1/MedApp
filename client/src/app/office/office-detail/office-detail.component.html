@@ -6,6 +6,13 @@
         <p>Office Address: {{office()?.city}}, {{office()?.street}} {{office()?.apartment}}</p>
         <p>Office name: {{office()?.name}}</p>
         <p>Doctor: {{office()?.doctor?.firstName}} {{office()?.doctor?.lastName}}</p>
+        @if (office()?.doctor?.id == accountService.currentUser()?.id) {
+          <p>
+            <button class="btn btn-primary" (click)="openEditOfficeModal(office())">
+              Edit office
+            </button>
+          </p>
+        }
       </tab>
       <tab heading="Appointments" (selectTab)="loadAppointments()">
         <table class="table table-hover">

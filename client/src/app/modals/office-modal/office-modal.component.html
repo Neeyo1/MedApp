@@ -1,5 +1,11 @@
 <div class="modal-header">
-    <h4 class="modal-title pull-left">Create office</h4>
+    <h4 class="modal-title pull-left">
+        @if (office) {
+            Edit office
+        } @else {
+            Create office
+        }
+    </h4>
     <button type="button"
             class="btn-close close pull-right"
             (click)="bsModalRef.hide()">
@@ -10,7 +16,13 @@
     <div class="d-flex align-items-center justify-content-center">
         <div class="col-8">
             <form [formGroup]="officeForm" (ngSubmit)="complete()" autocomplete="off">
-                <h2 class="text-center text-primary">Create office</h2>
+                <h2 class="text-center text-primary">
+                    @if (office) {
+                        Edit office
+                    } @else {
+                        Create office
+                    }
+                </h2>
                 <hr>
     
                 <app-text-input
@@ -53,7 +65,14 @@
                 <div class="form-group text-center">
                     <button class="btn btn-primary me-2" 
                             type="submit"
-                            [disabled]="!officeForm.valid">Create</button>
+                            [disabled]="!officeForm.valid"
+                    >
+                        @if (office) {
+                            Edit
+                        } @else {
+                            Create
+                        }
+                    </button>
                 </div>
             </form>
         </div>
