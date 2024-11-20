@@ -69,7 +69,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   }
 
   deleteAppointment(appointmentId: number, name: string){
-    this.myModalService.confirm(name)?.subscribe({
+    this.myModalService.openConfirmModal(name)?.subscribe({
       next: result => {
         if (result){
           this.appointmentService.deleteAppointment(appointmentId).subscribe({
@@ -81,44 +81,14 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
     })
   }
 
-  openEditOfficeModal(office: Office | null){
+  editOffice(office: Office | null){
     if (office == null) return;
-    const initialState: ModalOptions = {
-      class: 'modal-lg',
-      initialState:{
-        completed: false,
-        office: office
-      }
-    };
-    this.bsModalRef = this.modalService.show(OfficeModalComponent, initialState);
-    this.bsModalRef.onHide?.subscribe({
-      next: () => {
-        if (this.bsModalRef.content && this.bsModalRef.content.completed){
-          let officeForm = this.bsModalRef.content.officeForm;
-          const days = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 
-            'saturdayHours', 'sundayHours']
-          days.forEach(day => {
-            if (officeForm.value[day] == ''){
-              officeForm.value[day] = [];
-            } else{
-              officeForm.value[day] = officeForm.value[day].split(',').map(Number);
-            }
-          });
-
-          this.officeService.editOffice(office.id, officeForm.value).subscribe({
-            next: _ => {
-              this.officeService.getOffices();
-              this.loadOffice();
-            },
-            error: error => this.toastrService.error(error.error)
-          })
-        }
-      }
-    })
+    this.myModalService.openEditOfficeModal(office);
+    this.loadOffice();
   }
 
   deleteOffice(officeId: number, name: string){
-    this.myModalService.confirm(name)?.subscribe({
+    this.myModalService.openConfirmModal(name)?.subscribe({
       next: result => {
         if (result){
           this.officeService.deleteOffice(officeId).subscribe({

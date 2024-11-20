@@ -6,6 +6,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ChangePasswordModalComponent } from '../modals/change-password-modal/change-password-modal.component';
+import { ModalService } from '../_services/modal.service';
 
 @Component({
   selector: 'app-nav',
@@ -20,6 +21,7 @@ export class NavComponent {
   private router = inject(Router);
   private toastrService = inject(ToastrService);
   private modalService = inject(BsModalService);
+  private myModalService = inject(ModalService);
   bsModalRef: BsModalRef<ChangePasswordModalComponent> = new BsModalRef<ChangePasswordModalComponent>();
 
   login(){
@@ -36,25 +38,7 @@ export class NavComponent {
     this.router.navigateByUrl("/");
   }
 
-  openChangePasswordModal(){
-    const initialState: ModalOptions = {
-      class: 'modal-lg',
-      initialState:{
-        completed: false
-      }
-    };
-    this.bsModalRef = this.modalService.show(ChangePasswordModalComponent, initialState);
-    this.bsModalRef.onHide?.subscribe({
-      next: () => {
-        if (this.bsModalRef.content && this.bsModalRef.content.completed){
-          const changePasswordForm = this.bsModalRef.content.changePasswordForm;
-
-          this.accountService.changePassword(changePasswordForm.value).subscribe({
-            next: _ => this.toastrService.success("Password changed successfully"),
-            error: error => this.toastrService.error(error.error)
-          })
-        }
-      }
-    })
+  changePassword(){
+    this.myModalService.openChangePasswordModal();
   }
 }

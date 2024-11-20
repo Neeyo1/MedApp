@@ -7,13 +7,13 @@
 <p>Doctor info: {{appointment()?.office?.doctor?.firstName}} {{appointment()?.office?.doctor?.lastName}}</p>
 <p>Patient info: {{appointment()?.patient?.firstName}} {{appointment()?.patient?.lastName}}</p>
 @if (accountService.currentUser()?.id == appointment()?.office?.doctor?.id
-&& appointment()?.id) {
+&& appointment()?.id && appointment()?.patient?.id && appointment()?.office?.id) {
     @if (appointment()?.hasEnded) {
         <button class="btn btn-primary" (click)="setAsUncompleted(appointment()!.id)">
             Set as uncompleted
         </button>
 
-        <button class="btn btn-primary" (click)="showResultModal()">
+        <button class="btn btn-primary" (click)="createResult(appointment()!.patient!.id, appointment()!.office!.id)">
             Add result
         </button>
     } @else {

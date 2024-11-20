@@ -7,6 +7,7 @@ import { AccountService } from '../../_services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { OfficeModalComponent } from '../../modals/office-modal/office-modal.component';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-office-list',
@@ -20,6 +21,7 @@ export class OfficeListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private modalService = inject(BsModalService);
+  private myModalService = inject(ModalService);
   bsModalRef: BsModalRef<OfficeModalComponent> = new BsModalRef<OfficeModalComponent>();
 
   ngOnInit(): void {
@@ -37,35 +39,8 @@ export class OfficeListComponent implements OnInit, OnDestroy{
     this.officeService.getOffices();
   }
 
-  openOfficeModal(){
-    const initialState: ModalOptions = {
-      class: 'modal-lg',
-      initialState:{
-        completed: false
-      }
-    };
-    this.bsModalRef = this.modalService.show(OfficeModalComponent, initialState);
-    this.bsModalRef.onHide?.subscribe({
-      next: () => {
-        if (this.bsModalRef.content && this.bsModalRef.content.completed){
-          let officeForm = this.bsModalRef.content.officeForm;
-          const days = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 
-            'saturdayHours', 'sundayHours']
-          days.forEach(day => {
-            if (officeForm.value[day] == ''){
-              officeForm.value[day] = [];
-            } else{
-              officeForm.value[day] = officeForm.value[day].split(',').map(Number);
-            }
-          });
-
-          this.officeService.createOffice(officeForm.value).subscribe({
-            next: _ => this.officeService.getOffices(),
-            error: error => this.toastrService.error(error.error)
-          })
-        }
-      }
-    })
+  createOffice(){
+    this.myModalService.openCreateOfficeModal();
   }
 
   resetFilters(){

@@ -36,7 +36,7 @@
                         </button>
                         @if (accountService.roles().includes("Doctor")
                             && result.office.doctor.id == accountService.currentUser()?.id) {
-                            <button class="btn btn-primary" (click)="openEditResultModal(result)">
+                            <button class="btn btn-primary" (click)="editResult(result)">
                                 Edit
                             </button>
                             <button class="btn btn-danger" (click)="deleteResult(result.id, 'result')">

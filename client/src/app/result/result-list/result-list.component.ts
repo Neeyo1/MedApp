@@ -51,34 +51,13 @@ export class ResultListComponent implements OnInit, OnDestroy{
     this.router.navigateByUrl("/results/" + resultId);
   }
 
-  openEditResultModal(result: Result | null){
+  editResult(result: Result){
     if (result == null) return;
-    const initialState: ModalOptions = {
-      class: 'modal-lg',
-      initialState:{
-        completed: false,
-        result: result
-      }
-    };
-    this.bsModalRef = this.modalService.show(ResultModalComponent, initialState);
-    this.bsModalRef.onHide?.subscribe({
-      next: () => {
-        if (this.bsModalRef.content && this.bsModalRef.content.completed){
-          const resultForm = this.bsModalRef.content.resultForm;
-          resultForm.value['patientId'] = result.patient.id;
-          resultForm.value['officeId'] = result.office.id;
-
-          this.resultService.editResult(result.id, resultForm.value).subscribe({
-            next: _ => this.resultService.getMyResultsAsDoctor(),
-            error: error => this.toastrService.error(error.error)
-          })
-        }
-      }
-    })
+    this.myModalService.openEditResultModal(result);
   }
 
   deleteResult(resultId: number, name: string){
-    this.myModalService.confirm(name)?.subscribe({
+    this.myModalService.openConfirmModal(name)?.subscribe({
       next: result => {
         if (result){
           this.resultService.deleteResult(resultId).subscribe({

@@ -8,6 +8,7 @@ import { AccountService } from '../../_services/account.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ResultModalComponent } from '../../modals/result-modal/result-modal.component';
 import { ResultService } from '../../_services/result.service';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -25,6 +26,7 @@ export class AppointmentDetailComponent implements OnInit{
   private resultService = inject(ResultService);
   appointment = signal<AppointmentDetailed | null>(null);
   private modalService = inject(BsModalService);
+  private myModalService = inject(ModalService);
   bsModalRef: BsModalRef<ResultModalComponent> = new BsModalRef<ResultModalComponent>();
 
   ngOnInit(): void {
@@ -58,27 +60,8 @@ export class AppointmentDetailComponent implements OnInit{
     })
   }
 
-  showResultModal(){
-    const initialState: ModalOptions = {
-      class: 'modal-lg',
-      initialState:{
-        completed: false
-      }
-    };
-    this.bsModalRef = this.modalService.show(ResultModalComponent, initialState);
-    this.bsModalRef.onHide?.subscribe({
-      next: () => {
-        if (this.bsModalRef.content && this.bsModalRef.content.completed){
-          let resultForm = this.bsModalRef.content.resultForm;
-          resultForm.value['patientId'] = this.appointment()?.patient?.id;
-          resultForm.value['officeId'] = this.appointment()?.office.id;
-
-          this.resultService.createResult(resultForm.value).subscribe({
-            next: _ => this.resultService.getMyResultsAsDoctor(),
-            error: error => this.toastrService.error(error.error)
-          })
-        }
-      }
-    })
+  createResult(patientId: number, officeId: number){
+    this.myModalService.openCreateResultModal(patientId, officeId)
   }
+  
 }

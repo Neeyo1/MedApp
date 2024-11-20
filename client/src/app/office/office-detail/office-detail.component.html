@@ -8,7 +8,7 @@
         <p>Doctor: {{office()?.doctor?.firstName}} {{office()?.doctor?.lastName}}</p>
         @if (office()?.doctor?.id == accountService.currentUser()?.id) {
           <p>
-            <button class="btn btn-primary" (click)="openEditOfficeModal(office())">
+            <button class="btn btn-primary" (click)="editOffice(office())">
               Edit office
             </button>
             <button class="btn btn-danger" (click)="deleteOffice(office()!.id, 'office')">
