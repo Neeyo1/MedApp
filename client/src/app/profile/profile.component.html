@@ -1,0 +1,56 @@
+<h5>Profile info</h5>
+<p>First name: {{accountService.currentUser()?.firstName}}</p>
+<p>Last name: {{accountService.currentUser()?.lastName}}</p>
+<p>
+    Current photo:
+    <img src="{{accountService.currentUser()?.profilePhotoUrl || './assets/user.png'}}" 
+         alt="User main image"
+         style="width: 100px;">
+</p>
+@if (accountService.currentUser()?.profilePhotos?.length) {
+        My photos:<br/>
+        @for (photo of accountService.currentUser()?.profilePhotos; track photo.id) {
+            <div style="display: inline-flex;" class="me-4 my-photo">
+                <img src="{{photo.url}}" 
+                    alt="User main image"
+                    style="width: 100px;">
+                @if (!photo.isMain) {
+                    <button class="btn btn-primary btn-sm my-btn" 
+                            style="position: absolute;" 
+                            (click)="mainPhoto(photo.id)">
+                        Main
+                    </button>
+                }
+                <button class="btn btn-danger btn-sm my-btn" 
+                        style="position: absolute; margin-top: 50px;"
+                        (click)="deletePhoto(photo.id)">
+                    Delete
+                </button>
+            </div>
+        }
+}
+
+<div class="row">
+    <div>
+      <label class="btn btn-default p-0">
+        <input type="file" accept="image/*" (change)="selectFile($event)" />
+      </label>
+    </div>
+  
+    <div>
+      <button
+        class="btn btn-success btn-sm float-right"
+        [disabled]="!currentFile"
+        (click)="uploadPhoto()"
+      >
+        Upload
+      </button>
+    </div>
+</div>
+  
+  <div>
+    <img [src]="preview" class="preview" />
+  </div>
+  
+  
+

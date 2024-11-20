@@ -9,6 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { AppointmentDetailComponent } from './appointment/appointment-detail/appointment-detail.component';
 import { ResultListComponent } from './result/result-list/result-list.component';
 import { ResultDetailComponent } from './result/result-detail/result-detail.component';
+import { ProfileComponent } from './profile/profile.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -23,6 +24,7 @@ export const routes: Routes = [
             {path: 'appointments/:id', component: AppointmentDetailComponent},
             {path: 'results', component: ResultListComponent},
             {path: 'results/:id', component: ResultDetailComponent},
+            {path: 'profile', component: ProfileComponent},
         ]
     },
     {path: 'info', component: InfoComponent},
