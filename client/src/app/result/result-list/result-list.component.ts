@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ResultModalComponent } from '../../modals/result-modal/result-modal.component';
 import { Result } from '../../_models/result';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-result-list',
@@ -22,6 +23,7 @@ export class ResultListComponent implements OnInit, OnDestroy{
   private toastrService = inject(ToastrService);
   private router = inject(Router);
   accountService = inject(AccountService);
+  private myModalService = inject(ModalService);
   private modalService = inject(BsModalService);
   bsModalRef: BsModalRef<ResultModalComponent> = new BsModalRef<ResultModalComponent>();
 
@@ -75,8 +77,17 @@ export class ResultListComponent implements OnInit, OnDestroy{
     })
   }
 
-  deleteResult(resultId: number){
-    this.toastrService.info("delete modal")
+  deleteResult(resultId: number, name: string){
+    this.myModalService.confirm(name)?.subscribe({
+      next: result => {
+        if (result){
+          this.resultService.deleteResult(resultId).subscribe({
+            next: _ => this.loadMyResultsAsDoctor(),
+            error: error => this.toastrService.error(error.error)
+          });
+        }
+      }
+    })
   }
 
   pageChanged(event: any){

@@ -11,6 +11,9 @@
             <button class="btn btn-primary" (click)="openEditOfficeModal(office())">
               Edit office
             </button>
+            <button class="btn btn-danger" (click)="deleteOffice(office()!.id, 'office')">
+              Delete office
+            </button>
           </p>
         }
       </tab>
@@ -40,7 +43,7 @@
                               <button class="btn btn-primary" (click)="editAppointment(appointment.id)">
                                 Edit
                               </button>
-                              <button class="btn btn-primary" (click)="deleteAppointment(appointment.id)">
+                              <button class="btn btn-danger" (click)="deleteAppointment(appointment.id, 'appointment')">
                                 Delete
                               </button>
                             }

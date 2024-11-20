@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { OfficeModalComponent } from '../../modals/office-modal/office-modal.component';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-office-detail',
@@ -27,6 +28,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   private router = inject(Router);
   office = signal<Office | null>(null);
   accountService = inject(AccountService);
+  private myModalService = inject(ModalService);
   private modalService = inject(BsModalService);
   bsModalRef: BsModalRef<OfficeModalComponent> = new BsModalRef<OfficeModalComponent>();
 
@@ -66,11 +68,17 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
     console.log("Edit modal");
   }
 
-  deleteAppointment(appointmentId: number){
-    this.appointmentService.deleteAppointment(appointmentId).subscribe({
-      next: _ => this.loadAppointments(),
-      error: error => this.toastrService.error(error.error)
-    });
+  deleteAppointment(appointmentId: number, name: string){
+    this.myModalService.confirm(name)?.subscribe({
+      next: result => {
+        if (result){
+          this.appointmentService.deleteAppointment(appointmentId).subscribe({
+            next: _ => this.loadAppointments(),
+            error: error => this.toastrService.error(error.error)
+          });
+        }
+      }
+    })
   }
 
   openEditOfficeModal(office: Office | null){
@@ -104,6 +112,19 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
             },
             error: error => this.toastrService.error(error.error)
           })
+        }
+      }
+    })
+  }
+
+  deleteOffice(officeId: number, name: string){
+    this.myModalService.confirm(name)?.subscribe({
+      next: result => {
+        if (result){
+          this.officeService.deleteOffice(officeId).subscribe({
+            next: _ => this.router.navigateByUrl("/offices"),
+            error: error => this.toastrService.error(error.error)
+          });
         }
       }
     })
