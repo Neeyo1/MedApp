@@ -75,16 +75,18 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
     }
 
     [Authorize(Policy = "RequireDoctorRole")]
-    [HttpPost]
-    public async Task<ActionResult<OfficeDto>> CreateAppointments([FromQuery] int officeId, int year, int month)
+    [HttpPost()]
+    public async Task<ActionResult<OfficeDto>> CreateAppointments(AppointmentCreateDto appointmentCreateDto)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return BadRequest("Could not find user");
 
-        var office = await officeRepository.GetOfficeByIdAsync(officeId);
+        var office = await officeRepository.GetOfficeByIdAsync(appointmentCreateDto.OfficeId);
         if (office == null) return BadRequest("Office does not exist");
         if (office.DoctorId != user.Id) return Unauthorized();
 
+        var year = appointmentCreateDto.Year;
+        var month = appointmentCreateDto.Month;
         var days = DateTime.DaysInMonth(year, month);
         for (int day = 1; day <= days; day++)
         {
@@ -109,7 +111,7 @@ public class AppointmentsController(IAppointmentRepository appointmentRepository
                     DateEnd = appointmentDate.AddHours(1),
                     Office = office
                 };
-                if (!await appointmentRepository.IsAppointmentExisting(officeId, appointmentDate))
+                if (!await appointmentRepository.IsAppointmentExisting(appointmentCreateDto.OfficeId, appointmentDate))
                     appointmentRepository.AddAppointment(appointment);
             }
         }

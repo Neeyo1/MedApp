@@ -11,6 +11,8 @@ import { ResultService } from './result.service';
 import { OfficeModalComponent } from '../modals/office-modal/office-modal.component';
 import { OfficeService } from './office.service';
 import { Office } from '../_models/office';
+import { AppointmentModalComponent } from '../modals/appointment-modal/appointment-modal.component';
+import { AppointmentService } from './appointment.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,7 @@ export class ModalService {
   private toastrService = inject(ToastrService);
   private resultService = inject(ResultService);
   private officeService = inject(OfficeService);
+  private appointmentService = inject(AppointmentService);
 
   openConfirmModal(name: string){
       const config: ModalOptions = {
@@ -166,6 +169,28 @@ export class ModalService {
 
           this.officeService.editOffice(office.id, officeForm.value).subscribe({
             next: _ => this.officeService.getOffices()
+          })
+        }
+      }
+    })
+  }
+
+  openCreateAppointmentsModal(officeId: number){
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false
+      }
+    };
+    this.bsModalRef = this.modalService.show(AppointmentModalComponent, config);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          let appointmentForm = this.bsModalRef.content.appointmentForm;
+          appointmentForm.value['officeId'] = officeId;
+
+          this.appointmentService.createAppointments(appointmentForm.value).subscribe({
+            next: _ => this.appointmentService.getAppointments()
           })
         }
       }

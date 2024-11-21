@@ -135,7 +135,7 @@ export class AppointmentService {
     );
   }
 
-  createAppointment(model: any){
+  createAppointments(model: any){
     return this.http.post<Appointment>(this.baseUrl + "appointments", model).pipe(
       tap(() => {
         this.appointmentCache.clear();

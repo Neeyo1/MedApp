@@ -6,6 +6,56 @@
         <p>Office Address: {{office()?.city}}, {{office()?.street}} {{office()?.apartment}}</p>
         <p>Office name: {{office()?.name}}</p>
         <p>Doctor: {{office()?.doctor?.firstName}} {{office()?.doctor?.lastName}}</p>
+        <h6>Working hours</h6>
+        <p>
+          Monday: @if(office()?.mondayHours){
+            {{office()?.mondayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Tuesday: @if(office()?.tuesdayHours?.length){
+            {{office()?.tuesdayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Wednesday: @if(office()?.wednesdayHours?.length){
+            {{office()?.wednesdayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Thursday: @if(office()?.thursdayHours?.length){
+            {{office()?.thursdayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Friday: @if(office()?.fridayHours?.length){
+            {{office()?.fridayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Saturday: @if(office()?.saturdayHours?.length){
+            {{office()?.saturdayHours}}
+          } @else {
+            ---
+          }
+        </p>
+        <p>
+          Sunday: @if(office()?.sundayHours?.length){
+            {{office()?.sundayHours}}
+          } @else {
+            ---
+          }
+        </p>
         @if (office()?.doctor?.id == accountService.currentUser()?.id) {
           <p>
             <button class="btn btn-primary" (click)="editOffice(office())">
@@ -13,6 +63,9 @@
             </button>
             <button class="btn btn-danger" (click)="deleteOffice(office()!.id, 'office')">
               Delete office
+            </button>
+            <button class="btn btn-primary" (click)="createAppointments(office()!.id)">
+              Create appointments
             </button>
           </p>
         }

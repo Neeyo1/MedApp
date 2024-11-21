@@ -97,6 +97,10 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
     })
   }
 
+  createAppointments(officeId: number){
+    this.myModalService.openCreateAppointmentsModal(officeId);
+  }
+
   pageChanged(event: any){
     if (this.appointmentService.appointmentParams().pageNumber != event.page){
       this.appointmentService.appointmentParams().pageNumber = event.page;
