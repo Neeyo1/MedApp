@@ -57,8 +57,7 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
         } else if (this.accountService.roles().includes("Doctor")){
           this.loadAppointmentsAsDoctor();
         }
-      },
-      error: error => this.toastrService.error(error.error)
+      }
     });
   }
 

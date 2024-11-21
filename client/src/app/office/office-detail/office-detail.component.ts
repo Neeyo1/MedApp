@@ -42,7 +42,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
 
   loadOffice(){
     const officeId = Number(this.route.snapshot.paramMap.get("id"));
-    if (!officeId) return;
+    if (!officeId) this.router.navigateByUrl("/not-found");
 
     this.officeService.getOffice(officeId).subscribe({
       next: office => this.office.set(office)
@@ -51,7 +51,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
 
   loadAppointments(){
     const officeId = Number(this.route.snapshot.paramMap.get("id"));
-    if (!officeId) return;
+    if (!officeId) this.router.navigateByUrl("/not-found");;
 
     this.appointmentService.appointmentParams().officeId = officeId;
     this.appointmentService.getAppointments();
@@ -59,8 +59,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
 
   bookAppointment(appointmentId: number){
     this.appointmentService.bookAppointment(appointmentId).subscribe({
-      next: _ => this.loadAppointments(),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.loadAppointments()
     });
   }
 
@@ -73,8 +72,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
       next: result => {
         if (result){
           this.appointmentService.deleteAppointment(appointmentId).subscribe({
-            next: _ => this.loadAppointments(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.loadAppointments()
           });
         }
       }
@@ -92,8 +90,7 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
       next: result => {
         if (result){
           this.officeService.deleteOffice(officeId).subscribe({
-            next: _ => this.router.navigateByUrl("/offices"),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.router.navigateByUrl("/offices")
           });
         }
       }

@@ -30,8 +30,7 @@ export class VerificationListComponent implements OnInit, OnDestroy{
       next: _ => {
         this.toastrService.success("Successfully granted doctor role")
         this.loadVerifications();
-      },
-      error: error => this.toastrService.error(error.error)
+      }
     })
   }
 }

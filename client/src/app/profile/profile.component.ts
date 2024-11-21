@@ -44,23 +44,20 @@ export class ProfileComponent {
           this.toastrService.success("Successfully uploaded photo");
           this.currentFile = undefined;
           this.preview = '';
-        },
-        error: error => this.toastrService.error(error.error)
+        }
       });
     }
   }
 
   deletePhoto(photoId: number){
     this.accountService.deletePhoto(photoId).subscribe({
-      next: _ => this.toastrService.success("Successfully delete photo"),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.toastrService.success("Successfully delete photo")
     });
   }
 
   mainPhoto(photoId: number){
     this.accountService.mainPhoto(photoId).subscribe({
-      next: _ => this.toastrService.success("Successfully set photo as main"),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.toastrService.success("Successfully set photo as main")
     });
   }
 }

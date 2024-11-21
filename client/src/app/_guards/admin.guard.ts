@@ -5,12 +5,12 @@ import { ToastrService } from 'ngx-toastr';
 
 export const adminGuard: CanActivateFn = (route, state) => {
   const accountService = inject(AccountService);
-  const toastr = inject(ToastrService);
+  const toastrService = inject(ToastrService);
   
   if (accountService.roles().includes('Admin')){
     return true;
   } else{
-    toastr.error("You cannot enter admin page");
+    toastrService.error("You cannot enter admin page");
     return false;
   }
 };

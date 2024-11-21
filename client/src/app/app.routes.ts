@@ -12,6 +12,8 @@ import { ResultDetailComponent } from './result/result-detail/result-detail.comp
 import { ProfileComponent } from './profile/profile.component';
 import { VerificationListComponent } from './admin/verification-list/verification-list.component';
 import { adminGuard } from './_guards/admin.guard';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -32,5 +34,7 @@ export const routes: Routes = [
     },
     {path: 'info', component: InfoComponent},
     {path: 'register', component: RegisterComponent},
+    {path: 'not-found', component: NotFoundComponent},
+    {path: 'server-error', component: ServerErrorComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];

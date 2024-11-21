@@ -35,28 +35,22 @@ export class AppointmentDetailComponent implements OnInit{
 
   loadAppointment(){
     const appointmentId = Number(this.route.snapshot.paramMap.get("id"));
-    if (!appointmentId) return;
+    if (!appointmentId) this.router.navigateByUrl("/not-found");;
 
     this.appointmentService.getAppointmentDetailed(appointmentId).subscribe({
-      next: appointment => this.appointment.set(appointment),
-      error: error => {
-        this.toastrService.error(error.error);
-        this.router.navigateByUrl("/");
-      }
+      next: appointment => this.appointment.set(appointment)
     })
   }
 
   setAsCompleted(appointmentId: number){
     this.appointmentService.setAppointmentAsCompleted(appointmentId).subscribe({
-      next: _ => this.loadAppointment(),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.loadAppointment()
     })
   }
 
   setAsUncompleted(appointmentId: number){
     this.appointmentService.setAppointmentAsUncompleted(appointmentId).subscribe({
-      next: _ => this.loadAppointment(),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.loadAppointment()
     })
   }
 

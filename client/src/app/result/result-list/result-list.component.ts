@@ -61,8 +61,7 @@ export class ResultListComponent implements OnInit, OnDestroy{
       next: result => {
         if (result){
           this.resultService.deleteResult(resultId).subscribe({
-            next: _ => this.loadMyResultsAsDoctor(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.loadMyResultsAsDoctor()
           });
         }
       }

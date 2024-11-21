@@ -28,8 +28,7 @@ export class NavComponent {
     this.accountService.login(this.model).subscribe({
       next: () => {
         this.router.navigateByUrl("/")
-      },
-      error: error => this.toastrService.error(error.error)
+      }
     })
   }
 
@@ -44,8 +43,7 @@ export class NavComponent {
 
   askForVerification(){
     this.accountService.askForVerification().subscribe({
-      next: _ => this.toastrService.success("Ask for verivication successfully sent"),
-      error: error => this.toastrService.error(error.error)
+      next: _ => this.toastrService.success("Ask for verivication successfully sent")
     })
   }
 }

@@ -56,8 +56,7 @@ export class ModalService {
           const changePasswordForm = this.bsModalRef.content.changePasswordForm;
 
           this.accountService.changePassword(changePasswordForm.value).subscribe({
-            next: _ => this.toastrService.success("Password changed successfully"),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.toastrService.success("Password changed successfully")
           })
         }
       }
@@ -80,8 +79,7 @@ export class ModalService {
           resultForm.value['officeId'] = officeId;
 
           this.resultService.createResult(resultForm.value).subscribe({
-            next: _ => this.resultService.getMyResultsAsDoctor(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.resultService.getMyResultsAsDoctor()
           })
         }
       }
@@ -105,8 +103,7 @@ export class ModalService {
           resultForm.value['officeId'] = result.office.id;
 
           this.resultService.editResult(result.id, resultForm.value).subscribe({
-            next: _ => this.resultService.getMyResultsAsDoctor(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.resultService.getMyResultsAsDoctor()
           })
         }
       }
@@ -136,8 +133,7 @@ export class ModalService {
           });
 
           this.officeService.createOffice(officeForm.value).subscribe({
-            next: _ => this.officeService.getOffices(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.officeService.getOffices()
           })
         }
       }
@@ -169,8 +165,7 @@ export class ModalService {
           });
 
           this.officeService.editOffice(office.id, officeForm.value).subscribe({
-            next: _ => this.officeService.getOffices(),
-            error: error => this.toastrService.error(error.error)
+            next: _ => this.officeService.getOffices()
           })
         }
       }
