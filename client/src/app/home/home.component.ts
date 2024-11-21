@@ -12,7 +12,7 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit, OnDestroy{
   appointmentService = inject(AppointmentService);
-  private accountService = inject(AccountService);
+  accountService = inject(AccountService);
 
   ngOnInit(): void {
     this.loadAppointments();

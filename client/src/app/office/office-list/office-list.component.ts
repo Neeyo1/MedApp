@@ -52,6 +52,7 @@ export class OfficeListComponent implements OnInit, OnDestroy{
     if (this.officeService.officeParams().pageNumber != event.page){
       this.officeService.officeParams().pageNumber = event.page;
       this.loadOffices();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 }

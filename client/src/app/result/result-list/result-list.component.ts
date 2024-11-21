@@ -69,12 +69,17 @@ export class ResultListComponent implements OnInit, OnDestroy{
   }
 
   pageChanged(event: any){
-    if (this.resultService.resultParams().pageNumber != event.page){
-      this.resultService.resultParams().pageNumber = event.page;
-      if (this.accountService.roles().includes("Patient")){
+    if (this.accountService.roles().includes("Patient")){
+      if (this.resultService.resultParams().pageNumber != event.page){
+        this.resultService.resultParams().pageNumber = event.page;
         this.loadMyResultsAsPatient();
-      } else if (this.accountService.roles().includes("Doctor")){
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else if (this.accountService.roles().includes("Doctor")){
+      if (this.resultService.myResultAsDoctorParams().pageNumber != event.page){
+        this.resultService.myResultAsDoctorParams().pageNumber = event.page;
         this.loadMyResultsAsDoctor();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   }

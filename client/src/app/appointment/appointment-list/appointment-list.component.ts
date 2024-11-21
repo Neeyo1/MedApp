@@ -70,11 +70,13 @@ export class AppointmentListComponent implements OnInit, OnDestroy{
       if (this.appointmentService.myAppointmentAsPatientParams().pageNumber != event.page){
         this.appointmentService.myAppointmentAsPatientParams().pageNumber = event.page;
         this.loadAppointmentsAsPatient();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else if (this.accountService.roles().includes("Doctor")){
       if (this.appointmentService.myAppointmentAsDoctorParams().pageNumber != event.page){
         this.appointmentService.myAppointmentAsDoctorParams().pageNumber = event.page;
         this.loadAppointmentsAsDoctor();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   }
