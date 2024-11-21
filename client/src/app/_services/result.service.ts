@@ -113,6 +113,13 @@ export class ResultService {
     );
   }
 
+  resetEverything(){
+    this.resultCache.clear();
+    this.paginatedResult.set(null);
+    this.resultParams.set(new ResultParams);
+    this.myResultAsDoctorParams.set(new ResultParams);
+  }
+
   private setPaginationHeaders(pageNumber: number, pageSize: number){
     let params = new HttpParams();
 

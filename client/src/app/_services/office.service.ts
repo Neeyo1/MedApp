@@ -71,6 +71,12 @@ export class OfficeService {
     );
   }
 
+  resetEverything(){
+    this.officeCache.clear();
+    this.paginatedResult.set(null);
+    this.officeParams.set(new OfficeParams);
+  }
+
   private setPaginationHeaders(pageNumber: number, pageSize: number){
     let params = new HttpParams();
 

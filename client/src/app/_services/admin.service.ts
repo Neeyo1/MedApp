@@ -33,4 +33,8 @@ export class AdminService {
       })
     );
   }
+
+  resetEverything(){
+    this.adminCache.clear();
+  }
 }

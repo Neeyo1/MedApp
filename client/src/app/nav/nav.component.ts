@@ -7,6 +7,10 @@ import { ToastrService } from 'ngx-toastr';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ChangePasswordModalComponent } from '../modals/change-password-modal/change-password-modal.component';
 import { ModalService } from '../_services/modal.service';
+import { AdminService } from '../_services/admin.service';
+import { AppointmentService } from '../_services/appointment.service';
+import { OfficeService } from '../_services/office.service';
+import { ResultService } from '../_services/result.service';
 
 @Component({
   selector: 'app-nav',
@@ -22,6 +26,10 @@ export class NavComponent {
   private toastrService = inject(ToastrService);
   private modalService = inject(BsModalService);
   private myModalService = inject(ModalService);
+  private adminservice = inject(AdminService);
+  private appointmentService = inject(AppointmentService);
+  private officeService = inject(OfficeService);
+  private resultService = inject(ResultService);
   bsModalRef: BsModalRef<ChangePasswordModalComponent> = new BsModalRef<ChangePasswordModalComponent>();
 
   login(){
@@ -34,6 +42,10 @@ export class NavComponent {
 
   logout(){
     this.accountService.logout();
+    this.adminservice.resetEverything();
+    this.appointmentService.resetEverything();
+    this.officeService.resetEverything();
+    this.resultService.resetEverything();
     this.router.navigateByUrl("/");
   }
 

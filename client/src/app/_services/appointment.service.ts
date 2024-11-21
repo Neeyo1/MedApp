@@ -191,6 +191,14 @@ export class AppointmentService {
     );
   }
 
+  resetEverything(){
+    this.appointmentCache.clear();
+    this.paginatedResult.set(null);
+    this.appointmentParams.set(new AppointmentParams);
+    this.appointmentParams.set(new AppointmentParams);
+    this.appointmentParams.set(new AppointmentParams);
+  }
+
   private setPaginationHeaders(pageNumber: number, pageSize: number){
     let params = new HttpParams();
 

@@ -1,5 +1,5 @@
 @if (accountService.currentUser()) {
-    <p>You have {{appointmentService.paginatedResult()?.pagination?.totalItems}} appointment(s)</p>
+    <p>You have {{appointmentService.paginatedResult()?.pagination?.totalItems || "0"}} appointment(s)</p>
     @if (appointmentService.paginatedResult()?.items?.length 
         && appointmentService.paginatedResult()!.items!.length > 0) {
         <p>
