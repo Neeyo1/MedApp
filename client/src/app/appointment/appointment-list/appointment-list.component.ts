@@ -2,9 +2,8 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AppointmentService } from '../../_services/appointment.service';
 import { FormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../../_services/account.service';
 
 @Component({
@@ -17,7 +16,6 @@ import { AccountService } from '../../_services/account.service';
 export class AppointmentListComponent implements OnInit, OnDestroy{
   appointmentService = inject(AppointmentService);
   accountService = inject(AccountService);
-  private toastrService = inject(ToastrService);
   private router = inject(Router);
   statusList = [
     {value: 'current-open', display: 'Current open'},

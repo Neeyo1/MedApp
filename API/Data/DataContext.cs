@@ -66,7 +66,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasMany(x => x.Results)
             .WithOne(x => x.Office)
             .HasForeignKey(x => x.OfficeId)
-            .OnDelete(DeleteBehavior.SetNull)
+            .OnDelete(DeleteBehavior.NoAction)
             .IsRequired(false);
 
         //AppUser - Verification
@@ -96,6 +96,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
             .HasMany(x => x.OfficeSpecializations)
             .WithOne(x => x.Specialization)
             .HasForeignKey(x => x.SpecializationId)
+            .OnDelete(DeleteBehavior.NoAction)
             .IsRequired();
     }
 }

@@ -4,7 +4,7 @@ import { AccountService } from '../_services/account.service';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ChangePasswordModalComponent } from '../modals/change-password-modal/change-password-modal.component';
 import { ModalService } from '../_services/modal.service';
 import { AdminService } from '../_services/admin.service';

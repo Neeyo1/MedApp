@@ -6,7 +6,7 @@ import { AccountService } from '../../_services/account.service';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ResultModalComponent } from '../../modals/result-modal/result-modal.component';
 import { Result } from '../../_models/result';
 import { ModalService } from '../../_services/modal.service';
@@ -20,11 +20,9 @@ import { ModalService } from '../../_services/modal.service';
 })
 export class ResultListComponent implements OnInit, OnDestroy{
   resultService = inject(ResultService);
-  private toastrService = inject(ToastrService);
   private router = inject(Router);
   accountService = inject(AccountService);
   private myModalService = inject(ModalService);
-  private modalService = inject(BsModalService);
   bsModalRef: BsModalRef<ResultModalComponent> = new BsModalRef<ResultModalComponent>();
 
   ngOnInit(): void {

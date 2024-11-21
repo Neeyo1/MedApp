@@ -4,8 +4,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { RouterLink } from '@angular/router';
 import { OfficeService } from '../../_services/office.service';
 import { AccountService } from '../../_services/account.service';
-import { ToastrService } from 'ngx-toastr';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { OfficeModalComponent } from '../../modals/office-modal/office-modal.component';
 import { ModalService } from '../../_services/modal.service';
 
@@ -19,8 +18,6 @@ import { ModalService } from '../../_services/modal.service';
 export class OfficeListComponent implements OnInit, OnDestroy{
   officeService = inject(OfficeService);
   accountService = inject(AccountService);
-  private toastrService = inject(ToastrService);
-  private modalService = inject(BsModalService);
   private myModalService = inject(ModalService);
   bsModalRef: BsModalRef<OfficeModalComponent> = new BsModalRef<OfficeModalComponent>();
 

@@ -30,8 +30,9 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 
 builder.Services.AddDbContext<DataContext>(opt => 
 {
-    opt.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
-        new MySqlServerVersion(new Version(8, 0, 40)));
+    //opt.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+    //    new MySqlServerVersion(new Version(8, 0, 40)));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddIdentityCore<AppUser>(opt => 
@@ -71,7 +72,11 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
@@ -80,6 +85,8 @@ try
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
+    await context.Database.MigrateAsync();
 
     await roleManager.CreateAsync(new AppRole{Name = "User"});
     await roleManager.CreateAsync(new AppRole{Name = "Patient"});

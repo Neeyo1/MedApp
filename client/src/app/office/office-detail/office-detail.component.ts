@@ -1,7 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { OfficeService } from '../../_services/office.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Office } from '../../_models/office';
 import { AccountService } from '../../_services/account.service';
 import { TabsModule } from 'ngx-bootstrap/tabs';
@@ -9,7 +8,7 @@ import { AppointmentService } from '../../_services/appointment.service';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { OfficeModalComponent } from '../../modals/office-modal/office-modal.component';
 import { ModalService } from '../../_services/modal.service';
 
@@ -24,12 +23,10 @@ export class OfficeDetailComponent implements OnInit, OnDestroy{
   private officeService = inject(OfficeService);
   appointmentService = inject(AppointmentService);
   private route = inject(ActivatedRoute);
-  private toastrService = inject(ToastrService);
   private router = inject(Router);
   office = signal<Office | null>(null);
   accountService = inject(AccountService);
   private myModalService = inject(ModalService);
-  private modalService = inject(BsModalService);
   bsModalRef: BsModalRef<OfficeModalComponent> = new BsModalRef<OfficeModalComponent>();
 
   ngOnInit(): void {

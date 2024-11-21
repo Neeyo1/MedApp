@@ -1,13 +1,11 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AppointmentDetailed } from '../../_models/appointmentDetailed';
 import { AppointmentService } from '../../_services/appointment.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { DatePipe } from '@angular/common';
 import { AccountService } from '../../_services/account.service';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ResultModalComponent } from '../../modals/result-modal/result-modal.component';
-import { ResultService } from '../../_services/result.service';
 import { ModalService } from '../../_services/modal.service';
 
 @Component({
@@ -20,12 +18,9 @@ import { ModalService } from '../../_services/modal.service';
 export class AppointmentDetailComponent implements OnInit{
   private appointmentService = inject(AppointmentService);
   private route = inject(ActivatedRoute);
-  private toastrService = inject(ToastrService);
   private router = inject(Router);
   accountService = inject(AccountService);
-  private resultService = inject(ResultService);
   appointment = signal<AppointmentDetailed | null>(null);
-  private modalService = inject(BsModalService);
   private myModalService = inject(ModalService);
   bsModalRef: BsModalRef<ResultModalComponent> = new BsModalRef<ResultModalComponent>();
 
