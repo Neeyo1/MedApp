@@ -10,6 +10,8 @@ import { AppointmentDetailComponent } from './appointment/appointment-detail/app
 import { ResultListComponent } from './result/result-list/result-list.component';
 import { ResultDetailComponent } from './result/result-detail/result-detail.component';
 import { ProfileComponent } from './profile/profile.component';
+import { VerificationListComponent } from './admin/verification-list/verification-list.component';
+import { adminGuard } from './_guards/admin.guard';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -25,6 +27,7 @@ export const routes: Routes = [
             {path: 'results', component: ResultListComponent},
             {path: 'results/:id', component: ResultDetailComponent},
             {path: 'profile', component: ProfileComponent},
+            {path: 'admin', component: VerificationListComponent, canActivate: [adminGuard]},
         ]
     },
     {path: 'info', component: InfoComponent},

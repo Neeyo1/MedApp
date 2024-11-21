@@ -113,4 +113,8 @@ export class AccountService {
       })
     )
   }
+
+  askForVerification(){
+    return this.http.post<User>(this.baseUrl + "account/verify", {});
+  }
 }

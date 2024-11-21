@@ -1,0 +1,26 @@
+<div class="container mt-3">
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">User id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            @for (verification of adminService.result(); track verification.id) {
+                <tr>
+                    <td>{{verification.id}}</td>
+                    <td>{{verification.userId}}</td>
+                    <td>{{verification.firstName}} {{verification.lastName}}</td>
+                    <td>
+                        <button class="btn btn-primary" (click)="confirmAsDoctor(verification.id)">
+                            Confirm as doctor
+                        </button>
+                  </td>
+                </tr>
+            }
+        </tbody>
+      </table>
+</div>

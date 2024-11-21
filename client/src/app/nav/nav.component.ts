@@ -41,4 +41,11 @@ export class NavComponent {
   changePassword(){
     this.myModalService.openChangePasswordModal();
   }
+
+  askForVerification(){
+    this.accountService.askForVerification().subscribe({
+      next: _ => this.toastrService.success("Ask for verivication successfully sent"),
+      error: error => this.toastrService.error(error.error)
+    })
+  }
 }
